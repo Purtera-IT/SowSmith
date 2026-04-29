@@ -1,0 +1,175 @@
+{
+  "artifact_id": "art_e461b7bd40293ade",
+  "sha256": "87a77622d3b37fcb8a6889080069df398486df9a824b37125f08f1ef3205ecf5",
+  "parser_name": "transcript",
+  "parser_version": "transcript_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_fbfe0096321ac280",
+      "project_id": "adv_1046",
+      "artifact_id": "art_e461b7bd40293ade",
+      "atom_type": "quantity",
+      "raw_text": "We may add 5 cameras at main campus.",
+      "normalized_text": "We may add 5 cameras at main campus.",
+      "value": {
+        "text": "We may add 5 cameras at main campus.",
+        "quantity": 5,
+        "unit": "count",
+        "item": "cameras",
+        "operation": "may add"
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b02c4a8d72a9a093",
+          "artifact_id": "art_e461b7bd40293ade",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 1,
+            "line_end": 1,
+            "speaker": "Unknown",
+            "speaker_role": "unknown",
+            "timestamp_start": "00:00:01",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 0
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_fbfe0096321ac280",
+      "claim": "We may add 5 cameras at main campus.",
+      "normalized_claim": "We may add 5 cameras at main campus.",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_c833379fbfc9af02",
+      "project_id": "adv_1046",
+      "artifact_id": "art_e461b7bd40293ade",
+      "atom_type": "customer_instruction",
+      "raw_text": "Do not proceed at West Wing.",
+      "normalized_text": "Do not proceed at West Wing.",
+      "value": {
+        "text": "Do not proceed at West Wing."
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_9abbe2b704b3f651",
+          "artifact_id": "art_e461b7bd40293ade",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 2,
+            "line_end": 2,
+            "speaker": "Jane Customer",
+            "speaker_role": "customer",
+            "timestamp_start": "00:00:50",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 1
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "customer_spoken_instruction",
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_c833379fbfc9af02",
+      "claim": "Do not proceed at West Wing.",
+      "normalized_claim": "Do not proceed at West Wing.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_b835cf1ac38815ef",
+      "project_id": "adv_1046",
+      "artifact_id": "art_e461b7bd40293ade",
+      "atom_type": "open_question",
+      "raw_text": "Open question: MDF badge access?",
+      "normalized_text": "Open question: MDF badge access?",
+      "value": {
+        "text": "Open question: MDF badge access?"
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_fc5da3b7c6cf2b60",
+          "artifact_id": "art_e461b7bd40293ade",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 3,
+            "line_end": 3,
+            "speaker": "Purtera PM",
+            "speaker_role": "internal",
+            "timestamp_start": "00:01:20",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 2
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.74,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "missing_information_candidate"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_b835cf1ac38815ef",
+      "claim": "Open question: MDF badge access?",
+      "normalized_claim": "Open question: MDF badge access?",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:51.608705+00:00"
+}

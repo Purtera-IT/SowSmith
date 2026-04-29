@@ -1,0 +1,217 @@
+{
+  "artifact_id": "art_64ec48c444c7b539",
+  "sha256": "a375f8d8c1c807c97529f597dbbfadd89653cadcd68dae8e1a96c86faa9f2c19",
+  "parser_name": "email",
+  "parser_version": "email_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_c5fa5316fb8b955b",
+      "project_id": "adv_1004",
+      "artifact_id": "art_64ec48c444c7b539",
+      "atom_type": "exclusion",
+      "raw_text": "Please remove West Wing from scope and hold off until confirmed.",
+      "normalized_text": "please remove west wing from scope and hold off until confirmed.",
+      "value": {
+        "text": "Please remove West Wing from scope and hold off until confirmed.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_e6ab2d37c1b6c003",
+          "artifact_id": "art_64ec48c444c7b539",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 7,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-02-01 09:15",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_c5fa5316fb8b955b",
+      "claim": "Please remove West Wing from scope and hold off until confirmed.",
+      "normalized_claim": "please remove west wing from scope and hold off until confirmed.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_8d1936be708612e3",
+      "project_id": "adv_1004",
+      "artifact_id": "art_64ec48c444c7b539",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please remove West Wing from scope and hold off until confirmed.",
+      "normalized_text": "please remove west wing from scope and hold off until confirmed.",
+      "value": {
+        "text": "Please remove West Wing from scope and hold off until confirmed.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_e6ab2d37c1b6c003",
+          "artifact_id": "art_64ec48c444c7b539",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 7,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-02-01 09:15",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_8d1936be708612e3",
+      "claim": "Please remove West Wing from scope and hold off until confirmed.",
+      "normalized_claim": "please remove west wing from scope and hold off until confirmed.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_bde9aeeeeefecd0f",
+      "project_id": "adv_1004",
+      "artifact_id": "art_64ec48c444c7b539",
+      "atom_type": "constraint",
+      "raw_text": "Main Campus requires escort access after 5pm.",
+      "normalized_text": "main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_e6ab2d37c1b6c003",
+          "artifact_id": "art_64ec48c444c7b539",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 7,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-02-01 09:15",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_bde9aeeeeefecd0f",
+      "claim": "Main Campus requires escort access after 5pm.",
+      "normalized_claim": "main campus requires escort access after 5pm.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_4dcfa3affa4aee0d",
+      "project_id": "adv_1004",
+      "artifact_id": "art_64ec48c444c7b539",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please include West Wing in the camera rollout.",
+      "normalized_text": "please include west wing in the camera rollout.",
+      "value": {
+        "text": "Please include West Wing in the camera rollout.",
+        "message_index": 1,
+        "quoted": true
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_22fb2da0ad057a7c",
+          "artifact_id": "art_64ec48c444c7b539",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 1,
+            "line_start": 8,
+            "line_end": 9,
+            "sender": "unknown",
+            "sent_at": "",
+            "quoted": true
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "quoted_old_email",
+      "confidence": 0.45,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_4dcfa3affa4aee0d",
+      "claim": "Please include West Wing in the camera rollout.",
+      "normalized_claim": "please include west wing in the camera rollout.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:18.897826+00:00"
+}

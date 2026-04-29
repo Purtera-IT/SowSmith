@@ -1,0 +1,287 @@
+{
+  "artifact_id": "art_488e7ce696d28048",
+  "sha256": "3bc2e57d37d9902bfc2905620b19e9d3a0d97db597c4cf99e2c98ea8dcdfebda",
+  "parser_name": "quote",
+  "parser_version": "quote_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_205c6b9a4aa5bca9",
+      "project_id": "adv_2100",
+      "artifact_id": "art_488e7ce696d28048",
+      "atom_type": "vendor_line_item",
+      "raw_text": "Line item CAM-IP-001 IP Camera",
+      "normalized_text": "line item cam-ip-001 ip camera",
+      "value": {
+        "part_number": "CAM-IP-001",
+        "description": "IP Camera",
+        "quantity": "72",
+        "unit_price": "300.00",
+        "lead_time": "2 weeks"
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_3afbf78fde6d1964",
+          "artifact_id": "art_488e7ce696d28048",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_205c6b9a4aa5bca9",
+      "claim": "Line item CAM-IP-001 IP Camera",
+      "normalized_claim": "line item cam-ip-001 ip camera",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_25ac9802e9b0b30f",
+      "project_id": "adv_2100",
+      "artifact_id": "art_488e7ce696d28048",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 72",
+      "normalized_text": "quantity 72",
+      "value": {
+        "quantity": 72,
+        "unit": "count",
+        "raw": "72",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_3afbf78fde6d1964",
+          "artifact_id": "art_488e7ce696d28048",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_25ac9802e9b0b30f",
+      "claim": "Quantity 72",
+      "normalized_claim": "quantity 72",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_57ac084cdaad8411",
+      "project_id": "adv_2100",
+      "artifact_id": "art_488e7ce696d28048",
+      "atom_type": "constraint",
+      "raw_text": "Lead time 2 weeks",
+      "normalized_text": "lead time 2 weeks",
+      "value": {
+        "lead_time": "2 weeks"
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_3afbf78fde6d1964",
+          "artifact_id": "art_488e7ce696d28048",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "vendor_quote",
+      "confidence": 0.85,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_57ac084cdaad8411",
+      "claim": "Lead time 2 weeks",
+      "normalized_claim": "lead time 2 weeks",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_5b8b42363ff0df72",
+      "project_id": "adv_2100",
+      "artifact_id": "art_488e7ce696d28048",
+      "atom_type": "vendor_line_item",
+      "raw_text": "Line item TOTAL",
+      "normalized_text": "line item total",
+      "value": {
+        "part_number": "TOTAL",
+        "description": "",
+        "quantity": "72",
+        "unit_price": "",
+        "lead_time": ""
+      },
+      "entity_keys": [
+        "part:total"
+      ],
+      "source_refs": [
+        {
+          "id": "src_65d0e8157543bc19",
+          "artifact_id": "art_488e7ce696d28048",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 3,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_5b8b42363ff0df72",
+      "claim": "Line item TOTAL",
+      "normalized_claim": "line item total",
+      "entity": "part:total",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_bbe705e4bab8e364",
+      "project_id": "adv_2100",
+      "artifact_id": "art_488e7ce696d28048",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 72",
+      "normalized_text": "quantity 72",
+      "value": {
+        "quantity": 72,
+        "unit": "count",
+        "raw": "72",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "part:total"
+      ],
+      "source_refs": [
+        {
+          "id": "src_65d0e8157543bc19",
+          "artifact_id": "art_488e7ce696d28048",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 3,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_bbe705e4bab8e364",
+      "claim": "Quantity 72",
+      "normalized_claim": "quantity 72",
+      "entity": "part:total",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T13:44:19.738449+00:00"
+}

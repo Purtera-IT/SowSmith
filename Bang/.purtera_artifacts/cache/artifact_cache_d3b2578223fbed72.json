@@ -1,0 +1,301 @@
+{
+  "artifact_id": "art_4ba15d7be515fa5d",
+  "sha256": "2afe7188f5d77403c6c50c37bfb426c0e9cbb972eeea957b1f44f3de88741c48",
+  "parser_name": "docx",
+  "parser_version": "docx_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_66833765772ffbd2",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "exclusion",
+      "raw_text": "West Wing is excluded from scope pending customer confirmation.",
+      "normalized_text": "west wing is excluded from scope pending customer confirmation.",
+      "value": {
+        "text": "West Wing is excluded from scope pending customer confirmation.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b089402cb1d7f93e",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 1,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_66833765772ffbd2",
+      "claim": "West Wing is excluded from scope pending customer confirmation.",
+      "normalized_claim": "west wing is excluded from scope pending customer confirmation.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_f0b4cf9301dbd5d4",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "assumption",
+      "raw_text": "Assumption: Existing network closets remain available.",
+      "normalized_text": "assumption: existing network closets remain available.",
+      "value": {
+        "text": "Assumption: Existing network closets remain available.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_aa9bc9f0189052e8",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 3,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_f0b4cf9301dbd5d4",
+      "claim": "Assumption: Existing network closets remain available.",
+      "normalized_claim": "assumption: existing network closets remain available.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_97ab45ea06a8f82f",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for lift access and escort coordination.",
+      "normalized_text": "customer is responsible for lift access and escort coordination.",
+      "value": {
+        "text": "Customer is responsible for lift access and escort coordination.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_1c3bea4d09290570",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 5,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_97ab45ea06a8f82f",
+      "claim": "Customer is responsible for lift access and escort coordination.",
+      "normalized_claim": "customer is responsible for lift access and escort coordination.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_c9d80174208581b6",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "scope_item",
+      "raw_text": "Install IP Camera at Main Campus and West Wing.",
+      "normalized_text": "install ip camera at main campus and west wing.",
+      "value": {
+        "text": "Install IP Camera at Main Campus and West Wing.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "site:west_wing",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_908c46207a00e5dc",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": 0,
+            "row": 0,
+            "cell": 1,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_c9d80174208581b6",
+      "claim": "Install IP Camera at Main Campus and West Wing.",
+      "normalized_claim": "install ip camera at main campus and west wing.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_343820c025aff8bc",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for lift access.",
+      "normalized_text": "customer is responsible for lift access.",
+      "value": {
+        "text": "Customer is responsible for lift access.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_f1bd1764b3e75b11",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": 0,
+            "row": 1,
+            "cell": 1,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_343820c025aff8bc",
+      "claim": "Customer is responsible for lift access.",
+      "normalized_claim": "customer is responsible for lift access.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_a39aee738da9905c",
+      "project_id": "adv_1013",
+      "artifact_id": "art_4ba15d7be515fa5d",
+      "atom_type": "scope_item",
+      "raw_text": "Install AV displays at West Wing.",
+      "normalized_text": "install av displays at west wing.",
+      "value": {
+        "text": "Install AV displays at West Wing.",
+        "tracked_change": "deleted"
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_48036d26cdec8734",
+          "artifact_id": "art_4ba15d7be515fa5d",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": "deleted"
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "deleted_text",
+      "confidence": 0.2,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "rejected",
+      "review_flags": [
+        "tracked_change_deleted_text"
+      ],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_a39aee738da9905c",
+      "claim": "Install AV displays at West Wing.",
+      "normalized_claim": "install av displays at west wing.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:26.501130+00:00"
+}

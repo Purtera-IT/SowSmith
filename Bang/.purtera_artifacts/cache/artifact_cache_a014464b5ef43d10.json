@@ -1,0 +1,577 @@
+{
+  "artifact_id": "art_d2cb0c559e3e363a",
+  "sha256": "9ff859ea1345afaae0ec08c0b6f179ee8cf5ebf0301363fbdea73addc10bcf5c",
+  "parser_name": "xlsx",
+  "parser_version": "xlsx_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_b9a4da1b9d134ec3",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "entity",
+      "raw_text": "Site Main Campus",
+      "normalized_text": "site main campus",
+      "value": {
+        "entity_type": "site",
+        "name": "Main Campus"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b90c552f08960a1d",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_b9a4da1b9d134ec3",
+      "claim": "Site Main Campus",
+      "normalized_claim": "site main campus",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_ebad075478695178",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "entity",
+      "raw_text": "Device IP Camera",
+      "normalized_text": "device ip camera",
+      "value": {
+        "entity_type": "device",
+        "name": "IP Camera"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b90c552f08960a1d",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_ebad075478695178",
+      "claim": "Device IP Camera",
+      "normalized_claim": "device ip camera",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_368b0d9a6343bd6d",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 50 EA",
+      "normalized_text": "quantity 50 ea",
+      "value": {
+        "quantity": 50,
+        "unit": "ea",
+        "raw": "50 EA",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b90c552f08960a1d",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_368b0d9a6343bd6d",
+      "claim": "Quantity 50 EA",
+      "normalized_claim": "quantity 50 ea",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_0bb666de3863d84b",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "scope_item",
+      "raw_text": "Scope Install",
+      "normalized_text": "scope install",
+      "value": {
+        "scope": "Install",
+        "site": "Main Campus",
+        "device": "IP Camera",
+        "floor": "1",
+        "room": ""
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b90c552f08960a1d",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_0bb666de3863d84b",
+      "claim": "Scope Install",
+      "normalized_claim": "scope install",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_b9b80844dbfd8131",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "constraint",
+      "raw_text": "Access Weekdays 8am-5pm",
+      "normalized_text": "access weekdays 8am-5pm",
+      "value": {
+        "access_window": "Weekdays 8am-5pm",
+        "site": "Main Campus",
+        "device": "IP Camera"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_b90c552f08960a1d",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_b9b80844dbfd8131",
+      "claim": "Access Weekdays 8am-5pm",
+      "normalized_claim": "access weekdays 8am-5pm",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_7e6a17c2f0a182c9",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "entity",
+      "raw_text": "Site West Wing",
+      "normalized_text": "site west wing",
+      "value": {
+        "entity_type": "site",
+        "name": "West Wing"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_99e3cc5c22a2d17b",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_7e6a17c2f0a182c9",
+      "claim": "Site West Wing",
+      "normalized_claim": "site west wing",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_9280d7d619f0924a",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "entity",
+      "raw_text": "Device IP Camera",
+      "normalized_text": "device ip camera",
+      "value": {
+        "entity_type": "device",
+        "name": "IP Camera"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_99e3cc5c22a2d17b",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_9280d7d619f0924a",
+      "claim": "Device IP Camera",
+      "normalized_claim": "device ip camera",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_838ee175015f5dd8",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 41 EA",
+      "normalized_text": "quantity 41 ea",
+      "value": {
+        "quantity": 41,
+        "unit": "ea",
+        "raw": "41 EA",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_99e3cc5c22a2d17b",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_838ee175015f5dd8",
+      "claim": "Quantity 41 EA",
+      "normalized_claim": "quantity 41 ea",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_9110ea129f9be9b4",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "scope_item",
+      "raw_text": "Scope Install",
+      "normalized_text": "scope install",
+      "value": {
+        "scope": "Install",
+        "site": "West Wing",
+        "device": "IP Camera",
+        "floor": "2",
+        "room": ""
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_99e3cc5c22a2d17b",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_9110ea129f9be9b4",
+      "claim": "Scope Install",
+      "normalized_claim": "scope install",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_e7c95d124c0b57d5",
+      "project_id": "adv_1002",
+      "artifact_id": "art_d2cb0c559e3e363a",
+      "atom_type": "constraint",
+      "raw_text": "Access escort access after 5pm",
+      "normalized_text": "access escort access after 5pm",
+      "value": {
+        "access_window": "escort access after 5pm",
+        "site": "West Wing",
+        "device": "IP Camera"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_99e3cc5c22a2d17b",
+          "artifact_id": "art_d2cb0c559e3e363a",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_e7c95d124c0b57d5",
+      "claim": "Access escort access after 5pm",
+      "normalized_claim": "access escort access after 5pm",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:17.017116+00:00"
+}

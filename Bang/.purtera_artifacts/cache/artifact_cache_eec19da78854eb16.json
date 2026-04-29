@@ -1,0 +1,14 @@
+{
+  "artifact_id": "art_1dac37f08d371f1e",
+  "sha256": "dc6f6fbe36bd2b118578fca60e74e409b9fdda0f42306d555daf0e3e1179373b",
+  "parser_name": "transcript",
+  "parser_version": "transcript_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T13:41:51.104883+00:00"
+}

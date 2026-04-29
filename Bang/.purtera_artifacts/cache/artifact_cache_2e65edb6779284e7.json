@@ -1,0 +1,205 @@
+{
+  "artifact_id": "art_556b26e197a2f23e",
+  "sha256": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb",
+  "parser_name": "docx",
+  "parser_version": "docx_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_c779a5c99de92d6a",
+      "project_id": "proj_9f13ea870978a765",
+      "artifact_id": "art_556b26e197a2f23e",
+      "atom_type": "scope_item",
+      "raw_text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_text": "scope includes installation of ip cameras at main campus and west wing.",
+      "value": {
+        "text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "site:west_wing",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_27e7a0d9bcd8c461",
+          "artifact_id": "art_556b26e197a2f23e",
+          "artifact_type": "docx",
+          "filename": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx",
+          "locator": {
+            "paragraph_index": 1,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_c779a5c99de92d6a",
+      "claim": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_claim": "scope includes installation of ip cameras at main campus and west wing.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_6c36f36735c096e8",
+      "project_id": "proj_9f13ea870978a765",
+      "artifact_id": "art_556b26e197a2f23e",
+      "atom_type": "exclusion",
+      "raw_text": "AV displays are excluded from scope.",
+      "normalized_text": "av displays are excluded from scope.",
+      "value": {
+        "text": "AV displays are excluded from scope.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_0bfea311da3b4c63",
+          "artifact_id": "art_556b26e197a2f23e",
+          "artifact_type": "docx",
+          "filename": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx",
+          "locator": {
+            "paragraph_index": 2,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_6c36f36735c096e8",
+      "claim": "AV displays are excluded from scope.",
+      "normalized_claim": "av displays are excluded from scope.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_9c3f736ba534bc3a",
+      "project_id": "proj_9f13ea870978a765",
+      "artifact_id": "art_556b26e197a2f23e",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for providing lift access.",
+      "normalized_text": "customer is responsible for providing lift access.",
+      "value": {
+        "text": "Customer is responsible for providing lift access.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_85fb424e5609fcdc",
+          "artifact_id": "art_556b26e197a2f23e",
+          "artifact_type": "docx",
+          "filename": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx",
+          "locator": {
+            "paragraph_index": 3,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_9c3f736ba534bc3a",
+      "claim": "Customer is responsible for providing lift access.",
+      "normalized_claim": "customer is responsible for providing lift access.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_a179ecd1a9c2d3bf",
+      "project_id": "proj_9f13ea870978a765",
+      "artifact_id": "art_556b26e197a2f23e",
+      "atom_type": "scope_item",
+      "raw_text": "Install AV displays in conference rooms.",
+      "normalized_text": "install av displays in conference rooms.",
+      "value": {
+        "text": "Install AV displays in conference rooms.",
+        "tracked_change": "deleted"
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_737034defaded428",
+          "artifact_id": "art_556b26e197a2f23e",
+          "artifact_type": "docx",
+          "filename": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": "deleted"
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "af46b530cb8369c14a17f677ecc9120f43c52ba916d48ec124c9de04a92fd7fb.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "deleted_text",
+      "confidence": 0.2,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "rejected",
+      "review_flags": [
+        "tracked_change_deleted_text"
+      ],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_a179ecd1a9c2d3bf",
+      "claim": "Install AV displays in conference rooms.",
+      "normalized_claim": "install av displays in conference rooms.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T13:42:06.318797+00:00"
+}

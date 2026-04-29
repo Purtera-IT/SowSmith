@@ -1,0 +1,255 @@
+{
+  "artifact_id": "art_36bbb84adc7614c3",
+  "sha256": "2ecdb7ef23d43af4067d7b43344f1e13345f5f60710fbc814be03fcebb8ef9fc",
+  "parser_name": "docx",
+  "parser_version": "docx_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_723722b1a095879b",
+      "project_id": "adv_1017",
+      "artifact_id": "art_36bbb84adc7614c3",
+      "atom_type": "scope_item",
+      "raw_text": "Scope includes installation of IP Camera at Main Campus and West Wing.",
+      "normalized_text": "scope includes installation of ip camera at main campus and west wing.",
+      "value": {
+        "text": "Scope includes installation of IP Camera at Main Campus and West Wing.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "site:west_wing",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_96359d632591cc7b",
+          "artifact_id": "art_36bbb84adc7614c3",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 1,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_723722b1a095879b",
+      "claim": "Scope includes installation of IP Camera at Main Campus and West Wing.",
+      "normalized_claim": "scope includes installation of ip camera at main campus and west wing.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_adb78d3c1379c0fd",
+      "project_id": "adv_1017",
+      "artifact_id": "art_36bbb84adc7614c3",
+      "atom_type": "exclusion",
+      "raw_text": "WEST WING IS EXCLUDED FROM SCOPE PENDING CUSTOMER CONFIRMATION.",
+      "normalized_text": "west wing is excluded from scope pending customer confirmation.",
+      "value": {
+        "text": "WEST WING IS EXCLUDED FROM SCOPE PENDING CUSTOMER CONFIRMATION.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_529712efb047bd2f",
+          "artifact_id": "art_36bbb84adc7614c3",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 2,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_adb78d3c1379c0fd",
+      "claim": "WEST WING IS EXCLUDED FROM SCOPE PENDING CUSTOMER CONFIRMATION.",
+      "normalized_claim": "west wing is excluded from scope pending customer confirmation.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_a9ebf7172a5a25be",
+      "project_id": "adv_1017",
+      "artifact_id": "art_36bbb84adc7614c3",
+      "atom_type": "assumption",
+      "raw_text": "Assumption: Existing network closets remain available.",
+      "normalized_text": "assumption: existing network closets remain available.",
+      "value": {
+        "text": "Assumption: Existing network closets remain available.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_f9db1c26792d4127",
+          "artifact_id": "art_36bbb84adc7614c3",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 4,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_a9ebf7172a5a25be",
+      "claim": "Assumption: Existing network closets remain available.",
+      "normalized_claim": "assumption: existing network closets remain available.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_5eae6b7f618bc79a",
+      "project_id": "adv_1017",
+      "artifact_id": "art_36bbb84adc7614c3",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for lift access and escort coordination.",
+      "normalized_text": "customer is responsible for lift access and escort coordination.",
+      "value": {
+        "text": "Customer is responsible for lift access and escort coordination.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_947c1aa975f836d9",
+          "artifact_id": "art_36bbb84adc7614c3",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 6,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_5eae6b7f618bc79a",
+      "claim": "Customer is responsible for lift access and escort coordination.",
+      "normalized_claim": "customer is responsible for lift access and escort coordination.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_c55532a176bf41e3",
+      "project_id": "adv_1017",
+      "artifact_id": "art_36bbb84adc7614c3",
+      "atom_type": "scope_item",
+      "raw_text": "Install AV displays at West Wing.",
+      "normalized_text": "install av displays at west wing.",
+      "value": {
+        "text": "Install AV displays at West Wing.",
+        "tracked_change": "deleted"
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_6c43f2778736f2d1",
+          "artifact_id": "art_36bbb84adc7614c3",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": "deleted"
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "deleted_text",
+      "confidence": 0.2,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "rejected",
+      "review_flags": [
+        "tracked_change_deleted_text"
+      ],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_c55532a176bf41e3",
+      "claim": "Install AV displays at West Wing.",
+      "normalized_claim": "install av displays at west wing.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:29.433465+00:00"
+}

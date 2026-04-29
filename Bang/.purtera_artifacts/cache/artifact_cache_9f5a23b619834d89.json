@@ -1,0 +1,205 @@
+{
+  "artifact_id": "art_db9983b63b7c5aca",
+  "sha256": "eae93f2854de97a56a5d4bf07819b0d82e5791c5e5a72d645769d5fce8e53c2d",
+  "parser_name": "docx",
+  "parser_version": "docx_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_ee44ff93e95f72bc",
+      "project_id": "inc_case_nocache_daa39871f2",
+      "artifact_id": "art_db9983b63b7c5aca",
+      "atom_type": "scope_item",
+      "raw_text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_text": "scope includes installation of ip cameras at main campus and west wing.",
+      "value": {
+        "text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "site:west_wing",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_518e3c4d099c0a3e",
+          "artifact_id": "art_db9983b63b7c5aca",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 1,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_ee44ff93e95f72bc",
+      "claim": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_claim": "scope includes installation of ip cameras at main campus and west wing.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_d06d3477d50c5055",
+      "project_id": "inc_case_nocache_daa39871f2",
+      "artifact_id": "art_db9983b63b7c5aca",
+      "atom_type": "exclusion",
+      "raw_text": "AV displays are excluded from scope.",
+      "normalized_text": "av displays are excluded from scope.",
+      "value": {
+        "text": "AV displays are excluded from scope.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_5ec03dc6589a4cb4",
+          "artifact_id": "art_db9983b63b7c5aca",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 2,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_d06d3477d50c5055",
+      "claim": "AV displays are excluded from scope.",
+      "normalized_claim": "av displays are excluded from scope.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_c0f216c0b9bbb60b",
+      "project_id": "inc_case_nocache_daa39871f2",
+      "artifact_id": "art_db9983b63b7c5aca",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for providing lift access.",
+      "normalized_text": "customer is responsible for providing lift access.",
+      "value": {
+        "text": "Customer is responsible for providing lift access.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_0c3e756ae1d08bbe",
+          "artifact_id": "art_db9983b63b7c5aca",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 3,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_c0f216c0b9bbb60b",
+      "claim": "Customer is responsible for providing lift access.",
+      "normalized_claim": "customer is responsible for providing lift access.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_6c03ba1a5a91cd37",
+      "project_id": "inc_case_nocache_daa39871f2",
+      "artifact_id": "art_db9983b63b7c5aca",
+      "atom_type": "scope_item",
+      "raw_text": "Install AV displays in conference rooms.",
+      "normalized_text": "install av displays in conference rooms.",
+      "value": {
+        "text": "Install AV displays in conference rooms.",
+        "tracked_change": "deleted"
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_2f1275ea0c9310da",
+          "artifact_id": "art_db9983b63b7c5aca",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": "deleted"
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "deleted_text",
+      "confidence": 0.2,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "rejected",
+      "review_flags": [
+        "tracked_change_deleted_text"
+      ],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_6c03ba1a5a91cd37",
+      "claim": "Install AV displays in conference rooms.",
+      "normalized_claim": "install av displays in conference rooms.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T13:52:29.532071+00:00"
+}

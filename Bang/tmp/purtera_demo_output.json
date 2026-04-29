@@ -1,0 +1,1942 @@
+{
+  "project_id": "demo_project",
+  "atoms": [
+    {
+      "id": "atm_8a934b098f4921e3",
+      "project_id": "demo_project",
+      "artifact_id": "art_f92b3b75a31c4df4",
+      "atom_type": "exclusion",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_79dbe7f249874b30",
+          "artifact_id": "art_f92b3b75a31c4df4",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_8a934b098f4921e3",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_d3c56b3e730e9168",
+      "project_id": "demo_project",
+      "artifact_id": "art_f92b3b75a31c4df4",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_79dbe7f249874b30",
+          "artifact_id": "art_f92b3b75a31c4df4",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_d3c56b3e730e9168",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_acf06bad6a7820c9",
+      "project_id": "demo_project",
+      "artifact_id": "art_f92b3b75a31c4df4",
+      "atom_type": "constraint",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_79dbe7f249874b30",
+          "artifact_id": "art_f92b3b75a31c4df4",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_acf06bad6a7820c9",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_82a22b9dbf815292",
+      "project_id": "demo_project",
+      "artifact_id": "art_f92b3b75a31c4df4",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please include West Wing in the camera rollout.",
+      "normalized_text": "please include west wing in the camera rollout.",
+      "value": {
+        "text": "Please include West Wing in the camera rollout.",
+        "message_index": 1,
+        "quoted": true
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_0c8275f9ea9c2e96",
+          "artifact_id": "art_f92b3b75a31c4df4",
+          "artifact_type": "email",
+          "filename": "customer_email.txt",
+          "locator": {
+            "message_index": 1,
+            "line_start": 7,
+            "line_end": 8,
+            "sender": "unknown",
+            "sent_at": "",
+            "quoted": true
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "customer_email.txt"
+        }
+      ],
+      "authority_class": "quoted_old_email",
+      "confidence": 0.45,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_82a22b9dbf815292",
+      "claim": "Please include West Wing in the camera rollout.",
+      "normalized_claim": "please include west wing in the camera rollout.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_e3747b25f13df6c9",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "entity",
+      "raw_text": "Site Main Campus",
+      "normalized_text": "site main campus",
+      "value": {
+        "entity_type": "site",
+        "name": "Main Campus"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_204cd145cbf855fc",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_e3747b25f13df6c9",
+      "claim": "Site Main Campus",
+      "normalized_claim": "site main campus",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_cac1e500d25dedc9",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "entity",
+      "raw_text": "Device IP Camera",
+      "normalized_text": "device ip camera",
+      "value": {
+        "entity_type": "device",
+        "name": "IP Camera"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_204cd145cbf855fc",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_cac1e500d25dedc9",
+      "claim": "Device IP Camera",
+      "normalized_claim": "device ip camera",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_92dedd1dc0c088cc",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 50",
+      "normalized_text": "quantity 50",
+      "value": {
+        "quantity": 50,
+        "unit": "count",
+        "raw": "50",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_204cd145cbf855fc",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_92dedd1dc0c088cc",
+      "claim": "Quantity 50",
+      "normalized_claim": "quantity 50",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_df3736f56f2ea33b",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "scope_item",
+      "raw_text": "Scope Install",
+      "normalized_text": "scope install",
+      "value": {
+        "scope": "Install",
+        "site": "Main Campus",
+        "device": "IP Camera",
+        "floor": "1",
+        "room": ""
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_204cd145cbf855fc",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_df3736f56f2ea33b",
+      "claim": "Scope Install",
+      "normalized_claim": "scope install",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_fdb4e68762637fa8",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "constraint",
+      "raw_text": "Access Weekdays 8am-5pm",
+      "normalized_text": "access weekdays 8am-5pm",
+      "value": {
+        "access_window": "Weekdays 8am-5pm",
+        "site": "Main Campus",
+        "device": "IP Camera"
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "device:ip_camera",
+        "floor:1"
+      ],
+      "source_refs": [
+        {
+          "id": "src_204cd145cbf855fc",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 2,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_fdb4e68762637fa8",
+      "claim": "Access Weekdays 8am-5pm",
+      "normalized_claim": "access weekdays 8am-5pm",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_efb4367ecdab4f40",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "entity",
+      "raw_text": "Site West Wing",
+      "normalized_text": "site west wing",
+      "value": {
+        "entity_type": "site",
+        "name": "West Wing"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_00ca48f231171b1d",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_efb4367ecdab4f40",
+      "claim": "Site West Wing",
+      "normalized_claim": "site west wing",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_796cdaedd7473fa5",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "entity",
+      "raw_text": "Device IP Camera",
+      "normalized_text": "device ip camera",
+      "value": {
+        "entity_type": "device",
+        "name": "IP Camera"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_00ca48f231171b1d",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_796cdaedd7473fa5",
+      "claim": "Device IP Camera",
+      "normalized_claim": "device ip camera",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_3a3c835ed79f68bf",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 41",
+      "normalized_text": "quantity 41",
+      "value": {
+        "quantity": 41,
+        "unit": "count",
+        "raw": "41",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_00ca48f231171b1d",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_3a3c835ed79f68bf",
+      "claim": "Quantity 41",
+      "normalized_claim": "quantity 41",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_784eb57c6433b205",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "scope_item",
+      "raw_text": "Scope Install",
+      "normalized_text": "scope install",
+      "value": {
+        "scope": "Install",
+        "site": "West Wing",
+        "device": "IP Camera",
+        "floor": "2",
+        "room": ""
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_00ca48f231171b1d",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_784eb57c6433b205",
+      "claim": "Scope Install",
+      "normalized_claim": "scope install",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_154cf65b8cf6ecf0",
+      "project_id": "demo_project",
+      "artifact_id": "art_5b26f68a921df193",
+      "atom_type": "constraint",
+      "raw_text": "Access Escort required",
+      "normalized_text": "access escort required",
+      "value": {
+        "access_window": "Escort required",
+        "site": "West Wing",
+        "device": "IP Camera"
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "floor:2"
+      ],
+      "source_refs": [
+        {
+          "id": "src_00ca48f231171b1d",
+          "artifact_id": "art_5b26f68a921df193",
+          "artifact_type": "xlsx",
+          "filename": "site_list.xlsx",
+          "locator": {
+            "sheet": "site_roster",
+            "row": 3,
+            "columns": {
+              "site": "A",
+              "floor": "B",
+              "device": "C",
+              "quantity": "D",
+              "access": "E",
+              "scope": "F"
+            }
+          },
+          "extraction_method": "table_header_mapping",
+          "parser_version": "xlsx_parser_v1",
+          "parser": "xlsx",
+          "path": "site_list.xlsx"
+        }
+      ],
+      "authority_class": "approved_site_roster",
+      "confidence": 0.92,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "xlsx_parser_v1",
+      "atom_id": "atm_154cf65b8cf6ecf0",
+      "claim": "Access Escort required",
+      "normalized_claim": "access escort required",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_44cfea5ea0f0732a",
+      "project_id": "demo_project",
+      "artifact_id": "art_ad1e90e0679a7b1a",
+      "atom_type": "scope_item",
+      "raw_text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_text": "scope includes installation of ip cameras at main campus and west wing.",
+      "value": {
+        "text": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+        "tracked_change": null
+      },
+      "entity_keys": [
+        "site:main_campus",
+        "site:west_wing",
+        "device:ip_cameras"
+      ],
+      "source_refs": [
+        {
+          "id": "src_1b021b7ba17f1962",
+          "artifact_id": "art_ad1e90e0679a7b1a",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 1,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_44cfea5ea0f0732a",
+      "claim": "Scope includes installation of IP Cameras at Main Campus and West Wing.",
+      "normalized_claim": "scope includes installation of ip cameras at main campus and west wing.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_8f1de9d136cf3071",
+      "project_id": "demo_project",
+      "artifact_id": "art_ad1e90e0679a7b1a",
+      "atom_type": "exclusion",
+      "raw_text": "AV displays are excluded from scope.",
+      "normalized_text": "av displays are excluded from scope.",
+      "value": {
+        "text": "AV displays are excluded from scope.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_c5de3b3275b953c8",
+          "artifact_id": "art_ad1e90e0679a7b1a",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 2,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_8f1de9d136cf3071",
+      "claim": "AV displays are excluded from scope.",
+      "normalized_claim": "av displays are excluded from scope.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_103314c7828fab81",
+      "project_id": "demo_project",
+      "artifact_id": "art_ad1e90e0679a7b1a",
+      "atom_type": "constraint",
+      "raw_text": "Customer is responsible for providing lift access.",
+      "normalized_text": "customer is responsible for providing lift access.",
+      "value": {
+        "text": "Customer is responsible for providing lift access.",
+        "tracked_change": null
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_a1a817f7eb0dce52",
+          "artifact_id": "art_ad1e90e0679a7b1a",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": 3,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": null
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "authority_class": "meeting_note",
+      "confidence": 0.84,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_103314c7828fab81",
+      "claim": "Customer is responsible for providing lift access.",
+      "normalized_claim": "customer is responsible for providing lift access.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_cf0da4778530b4b4",
+      "project_id": "demo_project",
+      "artifact_id": "art_ad1e90e0679a7b1a",
+      "atom_type": "scope_item",
+      "raw_text": "Install AV displays in conference rooms.",
+      "normalized_text": "install av displays in conference rooms.",
+      "value": {
+        "text": "Install AV displays in conference rooms.",
+        "tracked_change": "deleted"
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_98775d44de4ae986",
+          "artifact_id": "art_ad1e90e0679a7b1a",
+          "artifact_type": "docx",
+          "filename": "sow_draft.docx",
+          "locator": {
+            "paragraph_index": null,
+            "table_index": null,
+            "row": null,
+            "cell": null,
+            "tracked_change": "deleted"
+          },
+          "extraction_method": "docx_text_and_ooxml",
+          "parser_version": "docx_parser_v1",
+          "parser": "docx",
+          "path": "sow_draft.docx"
+        }
+      ],
+      "authority_class": "deleted_text",
+      "confidence": 0.2,
+      "review_status": "rejected",
+      "review_flags": [
+        "tracked_change_deleted_text"
+      ],
+      "parser_version": "docx_parser_v1",
+      "atom_id": "atm_cf0da4778530b4b4",
+      "claim": "Install AV displays in conference rooms.",
+      "normalized_claim": "install av displays in conference rooms.",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_bbcd4d623fafcd67",
+      "project_id": "demo_project",
+      "artifact_id": "art_033646c8e29f21c4",
+      "atom_type": "vendor_line_item",
+      "raw_text": "Line item CAM-IP-001 IP Camera",
+      "normalized_text": "line item cam-ip-001 ip camera",
+      "value": {
+        "part_number": "CAM-IP-001",
+        "description": "IP Camera",
+        "quantity": "72",
+        "unit_price": "300.00",
+        "lead_time": "2 weeks"
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_a337d45ee137d44c",
+          "artifact_id": "art_033646c8e29f21c4",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_bbcd4d623fafcd67",
+      "claim": "Line item CAM-IP-001 IP Camera",
+      "normalized_claim": "line item cam-ip-001 ip camera",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_ecd1cc32a7972ca8",
+      "project_id": "demo_project",
+      "artifact_id": "art_033646c8e29f21c4",
+      "atom_type": "quantity",
+      "raw_text": "Quantity 72",
+      "normalized_text": "quantity 72",
+      "value": {
+        "quantity": 72,
+        "unit": "count",
+        "raw": "72",
+        "uncertain": false
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_a337d45ee137d44c",
+          "artifact_id": "art_033646c8e29f21c4",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "authority_class": "vendor_quote",
+      "confidence": 0.9,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_ecd1cc32a7972ca8",
+      "claim": "Quantity 72",
+      "normalized_claim": "quantity 72",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_b121b0b0b892268a",
+      "project_id": "demo_project",
+      "artifact_id": "art_033646c8e29f21c4",
+      "atom_type": "constraint",
+      "raw_text": "Lead time 2 weeks",
+      "normalized_text": "lead time 2 weeks",
+      "value": {
+        "lead_time": "2 weeks"
+      },
+      "entity_keys": [
+        "device:ip_camera",
+        "part:cam_ip_001"
+      ],
+      "source_refs": [
+        {
+          "id": "src_a337d45ee137d44c",
+          "artifact_id": "art_033646c8e29f21c4",
+          "artifact_type": "xlsx",
+          "filename": "vendor_quote.xlsx",
+          "locator": {
+            "sheet": "quote",
+            "row": 2,
+            "columns": {
+              "part_number": "A",
+              "description": "B",
+              "quantity": "C",
+              "unit_price": "D",
+              "lead_time": "E"
+            }
+          },
+          "extraction_method": "quote_header_mapping",
+          "parser_version": "quote_parser_v1",
+          "parser": "xlsx",
+          "path": "vendor_quote.xlsx"
+        }
+      ],
+      "authority_class": "vendor_quote",
+      "confidence": 0.85,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "quote_parser_v1",
+      "atom_id": "atm_b121b0b0b892268a",
+      "claim": "Lead time 2 weeks",
+      "normalized_claim": "lead time 2 weeks",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "entities": [
+    {
+      "id": "ent_bb74829d20f2b6df",
+      "project_id": "demo_project",
+      "entity_type": "device",
+      "canonical_key": "device:ip_camera",
+      "canonical_name": "ip camera",
+      "aliases": [
+        "device:ip_camera",
+        "device:ip_cameras"
+      ],
+      "source_atom_ids": [
+        "atm_154cf65b8cf6ecf0",
+        "atm_3a3c835ed79f68bf",
+        "atm_44cfea5ea0f0732a",
+        "atm_784eb57c6433b205",
+        "atm_796cdaedd7473fa5",
+        "atm_82a22b9dbf815292",
+        "atm_92dedd1dc0c088cc",
+        "atm_b121b0b0b892268a",
+        "atm_bbcd4d623fafcd67",
+        "atm_cac1e500d25dedc9",
+        "atm_df3736f56f2ea33b",
+        "atm_e3747b25f13df6c9",
+        "atm_ecd1cc32a7972ca8",
+        "atm_efb4367ecdab4f40",
+        "atm_fdb4e68762637fa8"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    },
+    {
+      "id": "ent_0bda969511eab280",
+      "project_id": "demo_project",
+      "entity_type": "floor",
+      "canonical_key": "floor:1",
+      "canonical_name": "1",
+      "aliases": [
+        "floor:1"
+      ],
+      "source_atom_ids": [
+        "atm_92dedd1dc0c088cc",
+        "atm_cac1e500d25dedc9",
+        "atm_df3736f56f2ea33b",
+        "atm_e3747b25f13df6c9",
+        "atm_fdb4e68762637fa8"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    },
+    {
+      "id": "ent_6ab42eaa3047fd58",
+      "project_id": "demo_project",
+      "entity_type": "floor",
+      "canonical_key": "floor:2",
+      "canonical_name": "2",
+      "aliases": [
+        "floor:2"
+      ],
+      "source_atom_ids": [
+        "atm_154cf65b8cf6ecf0",
+        "atm_3a3c835ed79f68bf",
+        "atm_784eb57c6433b205",
+        "atm_796cdaedd7473fa5",
+        "atm_efb4367ecdab4f40"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    },
+    {
+      "id": "ent_8c3f5fd2a17913c3",
+      "project_id": "demo_project",
+      "entity_type": "part",
+      "canonical_key": "part:cam_ip_001",
+      "canonical_name": "cam ip 001",
+      "aliases": [
+        "part:cam_ip_001"
+      ],
+      "source_atom_ids": [
+        "atm_b121b0b0b892268a",
+        "atm_bbcd4d623fafcd67",
+        "atm_ecd1cc32a7972ca8"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    },
+    {
+      "id": "ent_e587f71d8e6cdab1",
+      "project_id": "demo_project",
+      "entity_type": "site",
+      "canonical_key": "site:main_campus",
+      "canonical_name": "main campus",
+      "aliases": [
+        "site:main_campus"
+      ],
+      "source_atom_ids": [
+        "atm_44cfea5ea0f0732a",
+        "atm_8a934b098f4921e3",
+        "atm_92dedd1dc0c088cc",
+        "atm_acf06bad6a7820c9",
+        "atm_cac1e500d25dedc9",
+        "atm_d3c56b3e730e9168",
+        "atm_df3736f56f2ea33b",
+        "atm_e3747b25f13df6c9",
+        "atm_fdb4e68762637fa8"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    },
+    {
+      "id": "ent_e1ac967c749589ee",
+      "project_id": "demo_project",
+      "entity_type": "site",
+      "canonical_key": "site:west_wing",
+      "canonical_name": "west wing",
+      "aliases": [
+        "site:west_wing"
+      ],
+      "source_atom_ids": [
+        "atm_154cf65b8cf6ecf0",
+        "atm_3a3c835ed79f68bf",
+        "atm_44cfea5ea0f0732a",
+        "atm_784eb57c6433b205",
+        "atm_796cdaedd7473fa5",
+        "atm_82a22b9dbf815292",
+        "atm_8a934b098f4921e3",
+        "atm_acf06bad6a7820c9",
+        "atm_d3c56b3e730e9168",
+        "atm_efb4367ecdab4f40"
+      ],
+      "confidence": 1.0,
+      "review_status": "auto_accepted"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge_0ee2c5894f850073",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_acf06bad6a7820c9",
+      "to_atom_id": "atm_784eb57c6433b205",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_150e53488895f54a",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_fdb4e68762637fa8",
+      "to_atom_id": "atm_fdb4e68762637fa8",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_259cc57272186c76",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_92dedd1dc0c088cc",
+      "to_atom_id": "atm_ecd1cc32a7972ca8",
+      "edge_type": "contradicts",
+      "reason": "Quantity mismatch 50 vs 72 for shared entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_26fe824641e46f17",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_3a3c835ed79f68bf",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_287dd5ca1e6b5217",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_3a3c835ed79f68bf",
+      "to_atom_id": "atm_3a3c835ed79f68bf",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_36ba787050d9f671",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_154cf65b8cf6ecf0",
+      "to_atom_id": "atm_44cfea5ea0f0732a",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_36f461d3bd4198f5",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_3a3c835ed79f68bf",
+      "to_atom_id": "atm_ecd1cc32a7972ca8",
+      "edge_type": "contradicts",
+      "reason": "Quantity mismatch 41 vs 72 for shared entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_379d71a9a6eaa263",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_44cfea5ea0f0732a",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_41461b518dfee61a",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_796cdaedd7473fa5",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_42428cb723f93243",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_796cdaedd7473fa5",
+      "to_atom_id": "atm_796cdaedd7473fa5",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_428a9b4f38c38a96",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_cac1e500d25dedc9",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_46af89ca6ef67fbb",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_acf06bad6a7820c9",
+      "to_atom_id": "atm_44cfea5ea0f0732a",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_48ffb52cda1675b1",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_784eb57c6433b205",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_5238e7eee0087a99",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_fdb4e68762637fa8",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_6161b07d6eb5223b",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_efb4367ecdab4f40",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_6290f3faeb741daf",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_acf06bad6a7820c9",
+      "to_atom_id": "atm_92dedd1dc0c088cc",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_7188a837534867fe",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_154cf65b8cf6ecf0",
+      "to_atom_id": "atm_154cf65b8cf6ecf0",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_77262f9b4877e45e",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_fdb4e68762637fa8",
+      "to_atom_id": "atm_df3736f56f2ea33b",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_78f7eaa033082048",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_82a22b9dbf815292",
+      "to_atom_id": "atm_82a22b9dbf815292",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_7d704bc0bd042b3a",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_acf06bad6a7820c9",
+      "to_atom_id": "atm_3a3c835ed79f68bf",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_8266ffb2c06461b6",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_e3747b25f13df6c9",
+      "to_atom_id": "atm_e3747b25f13df6c9",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_88c39fa72f464be8",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_acf06bad6a7820c9",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_8ab34a6c11a9359f",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_e3747b25f13df6c9",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_983feecee1f96d67",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_cac1e500d25dedc9",
+      "to_atom_id": "atm_cac1e500d25dedc9",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_a07a02ca29c9d1e4",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_44cfea5ea0f0732a",
+      "to_atom_id": "atm_44cfea5ea0f0732a",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_a181a954160a7f3f",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_fdb4e68762637fa8",
+      "to_atom_id": "atm_44cfea5ea0f0732a",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_aada5f67d2f51bdc",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_acf06bad6a7820c9",
+      "to_atom_id": "atm_df3736f56f2ea33b",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_ad2375b25471c6b9",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_154cf65b8cf6ecf0",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_ba87ef094caddc70",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_82a22b9dbf815292",
+      "to_atom_id": "atm_82a22b9dbf815292",
+      "edge_type": "quoted_from",
+      "reason": "Atom originates from quoted prior email content",
+      "confidence": 0.75
+    },
+    {
+      "id": "edge_c109c38e8fe6771d",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_df3736f56f2ea33b",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_c33376985ae9c54b",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_efb4367ecdab4f40",
+      "to_atom_id": "atm_efb4367ecdab4f40",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_c45ca693dbbb09de",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_82a22b9dbf815292",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_c5d69ad028210361",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_796cdaedd7473fa5",
+      "to_atom_id": "atm_cac1e500d25dedc9",
+      "edge_type": "supports",
+      "reason": "Atoms support each other with matching entity, type, and value",
+      "confidence": 0.88
+    },
+    {
+      "id": "edge_c9b5d3009bf9374e",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_fdb4e68762637fa8",
+      "to_atom_id": "atm_92dedd1dc0c088cc",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_ca071ab21cc0c679",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_784eb57c6433b205",
+      "to_atom_id": "atm_784eb57c6433b205",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_d31b52795f0eda53",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_154cf65b8cf6ecf0",
+      "to_atom_id": "atm_3a3c835ed79f68bf",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_d3221d5eb946dedb",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_154cf65b8cf6ecf0",
+      "to_atom_id": "atm_784eb57c6433b205",
+      "edge_type": "requires",
+      "reason": "Constraint requires adherence for same site context",
+      "confidence": 0.86
+    },
+    {
+      "id": "edge_d712bac46403188d",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_92dedd1dc0c088cc",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_d881c8d24938b340",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_3a3c835ed79f68bf",
+      "to_atom_id": "atm_ecd1cc32a7972ca8",
+      "edge_type": "contradicts",
+      "reason": "Aggregate scoped quantity 91 does not match vendor quantity 72 for device:ip_camera",
+      "confidence": 0.95
+    },
+    {
+      "id": "edge_e0edd1f3e71a0845",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_8a934b098f4921e3",
+      "to_atom_id": "atm_d3c56b3e730e9168",
+      "edge_type": "excludes",
+      "reason": "Exclusion atom applies to target entity context",
+      "confidence": 0.9
+    },
+    {
+      "id": "edge_f474163c70e602f1",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_df3736f56f2ea33b",
+      "to_atom_id": "atm_df3736f56f2ea33b",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    },
+    {
+      "id": "edge_f519f81ddc525aca",
+      "project_id": "demo_project",
+      "from_atom_id": "atm_92dedd1dc0c088cc",
+      "to_atom_id": "atm_92dedd1dc0c088cc",
+      "edge_type": "located_in",
+      "reason": "Entity is located within site and local context",
+      "confidence": 0.8
+    }
+  ],
+  "packets": [
+    {
+      "id": "pkt_9b661ee24539ebee",
+      "project_id": "demo_project",
+      "family": "customer_override",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_8a934b098f4921e3"
+      ],
+      "supporting_atom_ids": [
+        "atm_d3c56b3e730e9168"
+      ],
+      "contradicting_atom_ids": [
+        "atm_3a3c835ed79f68bf",
+        "atm_44cfea5ea0f0732a",
+        "atm_784eb57c6433b205",
+        "atm_8a934b098f4921e3",
+        "atm_92dedd1dc0c088cc",
+        "atm_df3736f56f2ea33b"
+      ],
+      "related_edge_ids": [
+        "edge_e0edd1f3e71a0845"
+      ],
+      "confidence": 0.71,
+      "status": "needs_review",
+      "reason": "Customer current instruction overrides prior context.",
+      "review_flags": [
+        "contradiction_present",
+        "customer_current_override"
+      ],
+      "packet_id": "pkt_9b661ee24539ebee",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_0cdd9cc80992cbfd",
+      "project_id": "demo_project",
+      "family": "quantity_conflict",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_92dedd1dc0c088cc"
+      ],
+      "supporting_atom_ids": [],
+      "contradicting_atom_ids": [
+        "atm_92dedd1dc0c088cc",
+        "atm_ecd1cc32a7972ca8"
+      ],
+      "related_edge_ids": [
+        "edge_259cc57272186c76"
+      ],
+      "confidence": 0.77,
+      "status": "needs_review",
+      "reason": "Quantity mismatch 50 vs 72 for shared entity context",
+      "review_flags": [
+        "contradiction_present"
+      ],
+      "packet_id": "pkt_0cdd9cc80992cbfd",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_7553519971ded1e5",
+      "project_id": "demo_project",
+      "family": "quantity_conflict",
+      "anchor_type": "site",
+      "anchor_key": "site:west_wing",
+      "governing_atom_ids": [
+        "atm_3a3c835ed79f68bf"
+      ],
+      "supporting_atom_ids": [],
+      "contradicting_atom_ids": [
+        "atm_3a3c835ed79f68bf",
+        "atm_ecd1cc32a7972ca8"
+      ],
+      "related_edge_ids": [
+        "edge_d881c8d24938b340"
+      ],
+      "confidence": 0.77,
+      "status": "needs_review",
+      "reason": "Aggregate scoped quantity 91 does not match vendor quantity 72 for device:ip_camera",
+      "review_flags": [
+        "contradiction_present"
+      ],
+      "packet_id": "pkt_7553519971ded1e5",
+      "topic": "site:west_wing",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_38faeed7e0aa26d3",
+      "project_id": "demo_project",
+      "family": "scope_exclusion",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_8a934b098f4921e3"
+      ],
+      "supporting_atom_ids": [
+        "atm_8a934b098f4921e3"
+      ],
+      "contradicting_atom_ids": [
+        "atm_3a3c835ed79f68bf",
+        "atm_44cfea5ea0f0732a",
+        "atm_784eb57c6433b205",
+        "atm_92dedd1dc0c088cc",
+        "atm_df3736f56f2ea33b"
+      ],
+      "related_edge_ids": [
+        "edge_26fe824641e46f17",
+        "edge_379d71a9a6eaa263",
+        "edge_41461b518dfee61a",
+        "edge_428a9b4f38c38a96",
+        "edge_48ffb52cda1675b1",
+        "edge_5238e7eee0087a99",
+        "edge_6161b07d6eb5223b",
+        "edge_88c39fa72f464be8",
+        "edge_8ab34a6c11a9359f",
+        "edge_ad2375b25471c6b9",
+        "edge_c109c38e8fe6771d",
+        "edge_c45ca693dbbb09de",
+        "edge_d712bac46403188d",
+        "edge_e0edd1f3e71a0845"
+      ],
+      "confidence": 0.71,
+      "status": "needs_review",
+      "reason": "Exclusion directive identified for scoped work.",
+      "review_flags": [
+        "contradiction_present",
+        "exclusion_present"
+      ],
+      "packet_id": "pkt_38faeed7e0aa26d3",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_642d98aa573cbe35",
+      "project_id": "demo_project",
+      "family": "scope_exclusion",
+      "anchor_type": "entity",
+      "anchor_key": "unknown",
+      "governing_atom_ids": [
+        "atm_8f1de9d136cf3071"
+      ],
+      "supporting_atom_ids": [
+        "atm_8f1de9d136cf3071"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [],
+      "confidence": 0.84,
+      "status": "active",
+      "reason": "Exclusion directive identified for scoped work.",
+      "review_flags": [
+        "exclusion_present"
+      ],
+      "packet_id": "pkt_642d98aa573cbe35",
+      "topic": "unknown",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_165653252a9cc55d",
+      "project_id": "demo_project",
+      "family": "scope_inclusion",
+      "anchor_type": "entity",
+      "anchor_key": "unknown",
+      "governing_atom_ids": [],
+      "supporting_atom_ids": [
+        "atm_cf0da4778530b4b4"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [],
+      "confidence": 0.0,
+      "status": "rejected",
+      "reason": "Scoped inclusion evidence is consistent.",
+      "review_flags": [
+        "deleted_text_present",
+        "low_confidence_atom"
+      ],
+      "packet_id": "pkt_165653252a9cc55d",
+      "topic": "unknown",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_4583fa008c695810",
+      "project_id": "demo_project",
+      "family": "site_access",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_acf06bad6a7820c9"
+      ],
+      "supporting_atom_ids": [
+        "atm_acf06bad6a7820c9"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [
+        "edge_0ee2c5894f850073",
+        "edge_46af89ca6ef67fbb",
+        "edge_6290f3faeb741daf",
+        "edge_7d704bc0bd042b3a",
+        "edge_88c39fa72f464be8",
+        "edge_aada5f67d2f51bdc"
+      ],
+      "confidence": 0.86,
+      "status": "active",
+      "reason": "Site access constraint captured.",
+      "review_flags": [],
+      "packet_id": "pkt_4583fa008c695810",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_7ce474fbb12e9f54",
+      "project_id": "demo_project",
+      "family": "site_access",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_fdb4e68762637fa8"
+      ],
+      "supporting_atom_ids": [
+        "atm_fdb4e68762637fa8"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [
+        "edge_150e53488895f54a",
+        "edge_5238e7eee0087a99",
+        "edge_77262f9b4877e45e",
+        "edge_a181a954160a7f3f",
+        "edge_c9b5d3009bf9374e"
+      ],
+      "confidence": 0.92,
+      "status": "active",
+      "reason": "Site access constraint captured.",
+      "review_flags": [],
+      "packet_id": "pkt_7ce474fbb12e9f54",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_076d53ad4ac2a71d",
+      "project_id": "demo_project",
+      "family": "site_access",
+      "anchor_type": "site",
+      "anchor_key": "site:west_wing",
+      "governing_atom_ids": [
+        "atm_154cf65b8cf6ecf0"
+      ],
+      "supporting_atom_ids": [
+        "atm_154cf65b8cf6ecf0"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [
+        "edge_36ba787050d9f671",
+        "edge_7188a837534867fe",
+        "edge_ad2375b25471c6b9",
+        "edge_d31b52795f0eda53",
+        "edge_d3221d5eb946dedb"
+      ],
+      "confidence": 0.92,
+      "status": "active",
+      "reason": "Site access constraint captured.",
+      "review_flags": [],
+      "packet_id": "pkt_076d53ad4ac2a71d",
+      "topic": "site:west_wing",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_5adf873813679638",
+      "project_id": "demo_project",
+      "family": "site_access",
+      "anchor_type": "entity",
+      "anchor_key": "unknown",
+      "governing_atom_ids": [
+        "atm_103314c7828fab81"
+      ],
+      "supporting_atom_ids": [
+        "atm_103314c7828fab81"
+      ],
+      "contradicting_atom_ids": [],
+      "related_edge_ids": [],
+      "confidence": 0.84,
+      "status": "active",
+      "reason": "Site access constraint captured.",
+      "review_flags": [],
+      "packet_id": "pkt_5adf873813679638",
+      "topic": "unknown",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_6a7e792f1cd57ab5",
+      "project_id": "demo_project",
+      "family": "vendor_mismatch",
+      "anchor_type": "site",
+      "anchor_key": "site:main_campus",
+      "governing_atom_ids": [
+        "atm_92dedd1dc0c088cc"
+      ],
+      "supporting_atom_ids": [],
+      "contradicting_atom_ids": [
+        "atm_92dedd1dc0c088cc",
+        "atm_ecd1cc32a7972ca8"
+      ],
+      "related_edge_ids": [
+        "edge_259cc57272186c76"
+      ],
+      "confidence": 0.77,
+      "status": "needs_review",
+      "reason": "Vendor quote quantity does not match scoped quantity.",
+      "review_flags": [
+        "contradiction_present",
+        "vendor_scope_quantity_mismatch"
+      ],
+      "packet_id": "pkt_6a7e792f1cd57ab5",
+      "topic": "site:main_campus",
+      "atom_ids": []
+    },
+    {
+      "id": "pkt_b26ed27e32352fc3",
+      "project_id": "demo_project",
+      "family": "vendor_mismatch",
+      "anchor_type": "site",
+      "anchor_key": "site:west_wing",
+      "governing_atom_ids": [
+        "atm_3a3c835ed79f68bf"
+      ],
+      "supporting_atom_ids": [],
+      "contradicting_atom_ids": [
+        "atm_3a3c835ed79f68bf",
+        "atm_ecd1cc32a7972ca8"
+      ],
+      "related_edge_ids": [
+        "edge_36f461d3bd4198f5"
+      ],
+      "confidence": 0.77,
+      "status": "needs_review",
+      "reason": "Vendor quote quantity does not match scoped quantity.",
+      "review_flags": [
+        "contradiction_present",
+        "vendor_scope_quantity_mismatch"
+      ],
+      "packet_id": "pkt_b26ed27e32352fc3",
+      "topic": "site:west_wing",
+      "atom_ids": []
+    }
+  ],
+  "warnings": [
+    "WARNING: Atom atm_82a22b9dbf815292 has low confidence 0.45",
+    "WARNING: Atom atm_cf0da4778530b4b4 has low confidence 0.20",
+    "WARNING: Packet pkt_0cdd9cc80992cbfd has contradictions",
+    "WARNING: Packet pkt_0cdd9cc80992cbfd status is needs_review",
+    "WARNING: Packet pkt_38faeed7e0aa26d3 has contradictions",
+    "WARNING: Packet pkt_38faeed7e0aa26d3 status is needs_review",
+    "WARNING: Packet pkt_6a7e792f1cd57ab5 has contradictions",
+    "WARNING: Packet pkt_6a7e792f1cd57ab5 status is needs_review",
+    "WARNING: Packet pkt_6a7e792f1cd57ab5 vendor_mismatch exists",
+    "WARNING: Packet pkt_7553519971ded1e5 has contradictions",
+    "WARNING: Packet pkt_7553519971ded1e5 status is needs_review",
+    "WARNING: Packet pkt_9b661ee24539ebee has contradictions",
+    "WARNING: Packet pkt_9b661ee24539ebee status is needs_review",
+    "WARNING: Packet pkt_b26ed27e32352fc3 has contradictions",
+    "WARNING: Packet pkt_b26ed27e32352fc3 status is needs_review",
+    "WARNING: Packet pkt_b26ed27e32352fc3 vendor_mismatch exists"
+  ],
+  "project_dir": "C:\\Users\\lilli\\Downloads\\Bang\\tests\\fixtures\\demo_project",
+  "ranked_atoms": [],
+  "entity_edges": []
+}

@@ -1,0 +1,330 @@
+{
+  "artifact_id": "art_49d42e5df1798ce2",
+  "sha256": "178ffc14ba3aca91a7fbd078573ad5609ead08a71396af21f3598c3da6308879",
+  "parser_name": "transcript",
+  "parser_version": "transcript_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_9dc79601bc747984",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "scope_item",
+      "raw_text": "Starting kickoff for camera rollout.",
+      "normalized_text": "Starting kickoff for camera rollout.",
+      "value": {
+        "text": "Starting kickoff for camera rollout."
+      },
+      "entity_keys": [
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_7c0e9197c10478ae",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 1,
+            "line_end": 1,
+            "speaker": "Purtera PM",
+            "speaker_role": "internal",
+            "timestamp_start": "00:00:01",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 0
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_9dc79601bc747984",
+      "claim": "Starting kickoff for camera rollout.",
+      "normalized_claim": "Starting kickoff for camera rollout.",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_c3179f06fb00e44c",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "constraint",
+      "raw_text": "Main Campus requires escort access after 5pm.",
+      "normalized_text": "Main Campus requires escort access after 5pm.",
+      "value": {
+        "text": "Main Campus requires escort access after 5pm.",
+        "constraint_type": "access",
+        "raw_constraint": "Main Campus requires escort access after 5pm."
+      },
+      "entity_keys": [
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_ed463257a7484f48",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 2,
+            "line_end": 2,
+            "speaker": "Jane Customer",
+            "speaker_role": "customer",
+            "timestamp_start": "00:01:10",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 1
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_c3179f06fb00e44c",
+      "claim": "Main Campus requires escort access after 5pm.",
+      "normalized_claim": "Main Campus requires escort access after 5pm.",
+      "entity": "site:main_campus",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_f3be5fa0bb998374",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "scope_item",
+      "raw_text": "Please remove West Wing from scope for now.",
+      "normalized_text": "Please remove West Wing from scope for now.",
+      "value": {
+        "text": "Please remove West Wing from scope for now."
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_aa24d40dd93f3f2d",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 3,
+            "line_end": 3,
+            "speaker": "Jane Customer",
+            "speaker_role": "customer",
+            "timestamp_start": "00:02:00",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 2
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_f3be5fa0bb998374",
+      "claim": "Please remove West Wing from scope for now.",
+      "normalized_claim": "Please remove West Wing from scope for now.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_bbb7a47627b75c7f",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please remove West Wing from scope for now.",
+      "normalized_text": "Please remove West Wing from scope for now.",
+      "value": {
+        "text": "Please remove West Wing from scope for now."
+      },
+      "entity_keys": [
+        "site:west_wing"
+      ],
+      "source_refs": [
+        {
+          "id": "src_aa24d40dd93f3f2d",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 3,
+            "line_end": 3,
+            "speaker": "Jane Customer",
+            "speaker_role": "customer",
+            "timestamp_start": "00:02:00",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 2
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "customer_spoken_instruction",
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_bbb7a47627b75c7f",
+      "claim": "Please remove West Wing from scope for now.",
+      "normalized_claim": "Please remove West Wing from scope for now.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_f5e46aa8ce2eef5a",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "open_question",
+      "raw_text": "Open question: MDF badge access?",
+      "normalized_text": "Open question: MDF badge access?",
+      "value": {
+        "text": "Open question: MDF badge access?"
+      },
+      "entity_keys": [],
+      "source_refs": [
+        {
+          "id": "src_74c1d1e7ce251b18",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 4,
+            "line_end": 4,
+            "speaker": "Purtera PM",
+            "speaker_role": "internal",
+            "timestamp_start": "00:03:25",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 3
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.74,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "missing_information_candidate"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_f5e46aa8ce2eef5a",
+      "claim": "Open question: MDF badge access?",
+      "normalized_claim": "Open question: MDF badge access?",
+      "entity": null,
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_d8810bef734170ea",
+      "project_id": "adv_1005",
+      "artifact_id": "art_49d42e5df1798ce2",
+      "atom_type": "quantity",
+      "raw_text": "maybe add 5 IP Cameras after pilot.",
+      "normalized_text": "maybe add 5 IP Cameras after pilot.",
+      "value": {
+        "text": "maybe add 5 IP Cameras after pilot.",
+        "quantity": 5,
+        "unit": "count",
+        "item": "IP Cameras",
+        "operation": "add"
+      },
+      "entity_keys": [
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_19d9878e1e34f868",
+          "artifact_id": "art_49d42e5df1798ce2",
+          "artifact_type": "transcript",
+          "filename": "kickoff_transcript.txt",
+          "locator": {
+            "line_start": 5,
+            "line_end": 5,
+            "speaker": "Jane Customer",
+            "speaker_role": "customer",
+            "timestamp_start": "00:04:00",
+            "timestamp_end": null,
+            "section": null,
+            "utterance_index": 4
+          },
+          "extraction_method": "transcript_rule_engine",
+          "parser_version": "transcript_parser_v1",
+          "parser": "transcript",
+          "path": "kickoff_transcript.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "meeting_note",
+      "confidence": 0.78,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "needs_review",
+      "review_flags": [
+        "verbal_commitment_requires_confirmation"
+      ],
+      "parser_version": "transcript_parser_v1",
+      "atom_id": "atm_d8810bef734170ea",
+      "claim": "maybe add 5 IP Cameras after pilot.",
+      "normalized_claim": "maybe add 5 IP Cameras after pilot.",
+      "entity": "device:ip_camera",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T14:07:19.750992+00:00"
+}

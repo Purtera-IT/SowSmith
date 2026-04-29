@@ -1,0 +1,220 @@
+{
+  "artifact_id": "art_6a511327d72befea",
+  "sha256": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c",
+  "parser_name": "email",
+  "parser_version": "email_parser_v1",
+  "domain_pack_id": "default_pack",
+  "domain_pack_version": "1.0.0",
+  "segments": [],
+  "candidates": [],
+  "atoms": [
+    {
+      "id": "atm_9144255e439b5094",
+      "project_id": "proj_231655f800fa1d76",
+      "artifact_id": "art_6a511327d72befea",
+      "atom_type": "exclusion",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_4b991d0c5705d6bf",
+          "artifact_id": "art_6a511327d72befea",
+          "artifact_type": "email",
+          "filename": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_9144255e439b5094",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_05c8e63ff67e5ee5",
+      "project_id": "proj_231655f800fa1d76",
+      "artifact_id": "art_6a511327d72befea",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_4b991d0c5705d6bf",
+          "artifact_id": "art_6a511327d72befea",
+          "artifact_type": "email",
+          "filename": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_05c8e63ff67e5ee5",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_71b330a31e92b786",
+      "project_id": "proj_231655f800fa1d76",
+      "artifact_id": "art_6a511327d72befea",
+      "atom_type": "constraint",
+      "raw_text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_text": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "value": {
+        "text": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+        "message_index": 0,
+        "quoted": false
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "site:main_campus"
+      ],
+      "source_refs": [
+        {
+          "id": "src_4b991d0c5705d6bf",
+          "artifact_id": "art_6a511327d72befea",
+          "artifact_type": "email",
+          "filename": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt",
+          "locator": {
+            "message_index": 0,
+            "line_start": 1,
+            "line_end": 6,
+            "sender": "jane.customer@example.com",
+            "sent_at": "2026-01-15 09:00",
+            "quoted": false
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "customer_current_authored",
+      "confidence": 0.86,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_71b330a31e92b786",
+      "claim": "Please remove West Wing from scope. Main Campus requires escort access after 5pm.",
+      "normalized_claim": "please remove west wing from scope. main campus requires escort access after 5pm.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    },
+    {
+      "id": "atm_423076354f77ec49",
+      "project_id": "proj_231655f800fa1d76",
+      "artifact_id": "art_6a511327d72befea",
+      "atom_type": "customer_instruction",
+      "raw_text": "Please include West Wing in the camera rollout.",
+      "normalized_text": "please include west wing in the camera rollout.",
+      "value": {
+        "text": "Please include West Wing in the camera rollout.",
+        "message_index": 1,
+        "quoted": true
+      },
+      "entity_keys": [
+        "site:west_wing",
+        "device:ip_camera",
+        "device:ip_camera"
+      ],
+      "source_refs": [
+        {
+          "id": "src_5d3b64460d405fd6",
+          "artifact_id": "art_6a511327d72befea",
+          "artifact_type": "email",
+          "filename": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt",
+          "locator": {
+            "message_index": 1,
+            "line_start": 7,
+            "line_end": 8,
+            "sender": "unknown",
+            "sent_at": "",
+            "quoted": true
+          },
+          "extraction_method": "thread_text_rules",
+          "parser_version": "email_parser_v1",
+          "parser": "email",
+          "path": "474e149667f2d638b064adf987cd9af3ce7188b8611cbe7144320beebbf5ff9c.txt"
+        }
+      ],
+      "receipts": [],
+      "authority_class": "quoted_old_email",
+      "confidence": 0.45,
+      "confidence_raw": null,
+      "calibrated_confidence": null,
+      "review_status": "auto_accepted",
+      "review_flags": [],
+      "parser_version": "email_parser_v1",
+      "atom_id": "atm_423076354f77ec49",
+      "claim": "Please include West Wing in the camera rollout.",
+      "normalized_claim": "please include west wing in the camera rollout.",
+      "entity": "site:west_wing",
+      "predicate": "value",
+      "authority_score": 0.0
+    }
+  ],
+  "receipts": [],
+  "warnings": [],
+  "created_at": "2026-04-29T13:44:28.627823+00:00"
+}
