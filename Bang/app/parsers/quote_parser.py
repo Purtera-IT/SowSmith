@@ -498,13 +498,30 @@ def normalize_inclusion(included_cell: str, notes: str) -> dict[str, Any]:
     cell = normalize_text(included_cell).lower()
     note = normalize_text(notes).lower()
     text = f"{cell} {note}".strip()
-    out: dict[str, Any] = {"included": None, "inclusion_status": "unknown"}
-    if re.search(
-        r"\b(not included|excluded from|excluded|out of scope|by others|n\.i\.c\.|\bnic\b)\b",
+    out: dict[str, Any] = {
+        "included": None,
+        "inclusion_status": "unknown",
+        "owner_furnished_signal": False,
+    }
+    # Note-first exclusions (contractor not supplying / out of base bid).
+    exclusion_note = re.search(
+        r"\b("
+        r"not included|excluded from|excluded|out of scope|by others|not in contract|"
+        r"n\.?\s*i\.?\s*c\.?|\bnic\b|"
+        r"by owner|owner furnished|(?<![a-z])ofe(?![a-z])|customer provided"
+        r")\b",
         note,
-    ):
+        re.I,
+    )
+    if exclusion_note:
         out["included"] = False
         out["inclusion_status"] = "excluded"
+        if re.search(
+            r"\b(owner furnished|(?<![a-z])ofe(?![a-z])|customer provided|by owner)\b",
+            note,
+            re.I,
+        ):
+            out["owner_furnished_signal"] = True
         return out
     if cell in {"no", "n", "false", "0"}:
         out["included"] = False
@@ -513,13 +530,40 @@ def normalize_inclusion(included_cell: str, notes: str) -> dict[str, Any]:
         out["included"] = True
         out["inclusion_status"] = "included"
     if out["inclusion_status"] != "excluded":
-        if re.search(r"\b(optional|alternate|alt\s*1|option)\b", text):
+        if re.search(
+            r"\b(optional|alternate|alt\s*1|option|separate price|alternate price)\b",
+            text,
+            re.I,
+        ):
             out["inclusion_status"] = "optional"
-        elif re.search(r"\ballowance\b", text):
+        elif re.search(r"\ballowance only\b|\ballowance\b", text, re.I):
             out["inclusion_status"] = "allowance"
-        elif re.search(r"\btbd\b|to be confirmed", text):
+        elif re.search(r"\btbd\b|to be confirmed|pending field verification|for reference only|budgetary only\b", text, re.I):
             out["inclusion_status"] = "tbd"
+    if out["inclusion_status"] == "unknown" and re.search(
+        r"\b(for reference only|budgetary only|pending field verification)\b",
+        note,
+        re.I,
+    ):
+        out["inclusion_status"] = "tbd"
     return out
+
+
+def _cable_category_from_blob(blob: str) -> str | None:
+    """Distinguish Cat6A from Cat6 (never classify 6A as Cat6)."""
+    if re.search(
+        r"\b(cat6a|cat[\s-]*6[\s-]*a|category[\s-]*6[\s-]*a|category\s+6a)\b",
+        blob,
+        re.I,
+    ):
+        return "cat6a"
+    if re.search(
+        r"\b(cat6(?!a)|cat[\s-]*6(?!\s*a)|category[\s-]*6(?!\s*a))\b",
+        blob,
+        re.I,
+    ):
+        return "cat6"
+    return None
 
 
 def _material_heuristics(description: str, material_spec: str, notes: str) -> dict[str, Any]:
@@ -527,30 +571,34 @@ def _material_heuristics(description: str, material_spec: str, notes: str) -> di
     out: dict[str, Any] = {
         "normalized_item": normalize_text(description).strip(),
         "material_family": None,
-        "cable_category": None,
+        "cable_category": _cable_category_from_blob(blob),
         "shielding": None,
         "jacket_rating": None,
         "item_kind": "other",
+        "port_count": None,
         "is_scope_pollution_candidate": False,
     }
-    if "cat6a" in blob or "cat 6a" in blob:
-        out["cable_category"] = "cat6a"
-    elif "cat6" in blob or "cat 6" in blob:
-        out["cable_category"] = "cat6"
     if "stp" in blob or "shielded" in blob:
         out["shielding"] = "shielded"
     elif "utp" in blob or "unshielded" in blob:
         out["shielding"] = "unshielded"
     if "plenum" in blob:
         out["jacket_rating"] = "plenum"
-    if "rj45" in blob or "termination" in blob:
+    if "patch panel" in blob:
+        out["item_kind"] = "patch_panel"
+        m_ports = re.search(r"\b(\d{1,3})\s*[-\s]*port\b", blob, re.I)
+        if m_ports:
+            out["port_count"] = int(m_ports.group(1))
+    elif "keystone" in blob and "jack" in blob:
+        out["item_kind"] = "keystone_jack"
+    elif re.search(r"\bjacks?\b", blob):
+        out["item_kind"] = "jack"
+    elif "faceplate" in blob or "wall plate" in blob:
+        out["item_kind"] = "faceplate"
+    elif "rj45" in blob or "termination" in blob:
         out["item_kind"] = "termination"
     elif "patch cord" in blob:
         out["item_kind"] = "patch_cord"
-    elif "patch panel" in blob:
-        out["item_kind"] = "patch_panel"
-    elif "faceplate" in blob or "jack" in blob:
-        out["item_kind"] = "faceplate"
     elif "raceway" in blob or "conduit" in blob:
         out["item_kind"] = "raceway" if "raceway" in blob else "conduit"
     elif "certif" in blob or "test export" in blob or "fluke" in blob:
@@ -564,6 +612,234 @@ def _material_heuristics(description: str, material_spec: str, notes: str) -> di
         if out["item_kind"] == "other":
             out["item_kind"] = "power"
     return out
+
+
+def _price_math_mismatch(
+    qty_obj: dict[str, Any],
+    up_money: dict[str, Any],
+    ext_money: dict[str, Any],
+) -> bool:
+    q = qty_obj.get("quantity")
+    up = up_money.get("unit_price_amount")
+    ext = ext_money.get("extended_price_amount")
+    if q is None or up is None or ext is None:
+        return False
+    if up_money.get("price_status") != "known" or ext_money.get("price_status") != "known":
+        return False
+    if qty_obj.get("quantity_status") not in {"known", "zero"}:
+        return False
+    try:
+        prod = float(q) * float(up)
+        extf = float(ext)
+    except (TypeError, ValueError):
+        return False
+    tol = max(0.02, 1e-4 * max(abs(prod), abs(extf), 1.0))
+    return abs(prod - extf) > tol
+
+
+def _quote_row_needs_review(
+    row_kind: RowKind,
+    qty_obj: dict[str, Any],
+    inclusion_status: str,
+    unit_price_raw: str,
+    extended_raw: str,
+    up_money: dict[str, Any],
+    ext_money: dict[str, Any],
+    flags: list[str],
+) -> bool:
+    if row_kind in {"alternate", "option", "allowance", "excluded", "malformed"}:
+        return True
+    qs = str(qty_obj.get("quantity_status") or "")
+    if qs in {"tbd", "range", "allowance", "missing", "malformed"}:
+        return True
+    if inclusion_status in {"optional", "alternate", "allowance", "tbd", "excluded"}:
+        return True
+    if up_money.get("price_status") == "malformed" and unit_price_raw.strip():
+        return True
+    if ext_money.get("price_status") == "malformed" and extended_raw.strip():
+        return True
+    if "quote_parser:price_math_mismatch" in flags:
+        return True
+    if qty_obj.get("uncertain"):
+        return True
+    return False
+
+
+def _comparison_key(mat: dict[str, Any], normalized_item: str) -> str:
+    ik = str(mat.get("item_kind") or "other")
+    cat = mat.get("cable_category")
+    sh = mat.get("shielding")
+    ports = mat.get("port_count")
+
+    def _shield_key() -> str:
+        if sh == "unshielded":
+            return "utp"
+        if sh == "shielded":
+            return "stp"
+        return "unknown_shield"
+
+    if ik == "cable_drop":
+        tier = cat or "unknown_tier"
+        return f"cabling:{tier}:{_shield_key()}:drop"
+    if ik == "termination":
+        return "cabling:rj45:termination"
+    if ik == "patch_panel" and ports:
+        return f"cabling:patch_panel:{int(ports)}_port"
+    if ik == "patch_panel":
+        return "cabling:patch_panel:unknown_port"
+    if ik == "faceplate":
+        return "cabling:faceplate"
+    if ik == "jack":
+        return "cabling:jack"
+    if ik == "keystone_jack":
+        return "cabling:keystone_jack"
+    if ik == "patch_cord":
+        return "cabling:patch_cord"
+    if ik in {"raceway", "conduit"}:
+        return "pathway:raceway_conduit"
+    if ik == "certification":
+        return "testing:certification_export"
+    if ik == "power":
+        return "electrical:power_location"
+    if ik == "labor":
+        return "labor:generic"
+    slug = re.sub(r"[^a-z0-9]+", "_", normalize_text(normalized_item).lower()).strip("_") or "item"
+    return f"unknown:{slug[:96]}"
+
+
+def _commercial_role(
+    mat: dict[str, Any],
+    inclusion_status: str,
+    row_kind: RowKind,
+    inc_obj: dict[str, Any],
+) -> str:
+    ik = str(mat.get("item_kind") or "other")
+    if inclusion_status == "allowance" or row_kind == "allowance":
+        return "allowance"
+    if inclusion_status in {"optional", "alternate"} or row_kind in {"alternate", "option"}:
+        return "alternate"
+    if inc_obj.get("owner_furnished_signal"):
+        return "owner_furnished"
+    if ik == "certification":
+        return "testing"
+    if ik in {"raceway", "conduit"}:
+        return "pathway"
+    if ik == "power":
+        return "electrical"
+    if ik == "labor":
+        return "labor"
+    if ik == "other":
+        return "unknown"
+    return "material"
+
+
+def _scope_relevance(
+    mat: dict[str, Any],
+    included_bool: bool | None,
+    inclusion_status: str,
+    row_kind: RowKind,
+) -> str:
+    if mat.get("is_scope_pollution_candidate") and mat.get("item_kind") == "power":
+        return "scope_pollution_candidate"
+    if inclusion_status == "excluded" or included_bool is False:
+        return "excluded_candidate"
+    if inclusion_status in {"optional", "alternate"}:
+        return "optional_candidate"
+    if inclusion_status == "allowance":
+        return "allowance_candidate"
+    if included_bool is True and inclusion_status == "included":
+        return "in_scope_candidate"
+    if included_bool is True:
+        return "in_scope_candidate"
+    return "unknown"
+
+
+def _confidence_dimensions(
+    header_map: dict[str, int],
+    qty_obj: dict[str, Any],
+    mat: dict[str, Any],
+    inc_obj: dict[str, Any],
+    column_count: int,
+) -> dict[str, str]:
+    hm = len(header_map)
+    header_mapping = "high" if hm >= 5 else ("medium" if hm >= 3 else "low")
+    qs = str(qty_obj.get("quantity_status") or "")
+    if qs in {"known", "zero"} and not qty_obj.get("uncertain"):
+        quantity_parse = "high"
+    elif qs in {"known", "zero", "included_no_qty", "not_applicable"}:
+        quantity_parse = "medium"
+    else:
+        quantity_parse = "low"
+    item_normalization = "high" if mat.get("item_kind") not in (None, "other") else "low"
+    inc = str(inc_obj.get("inclusion_status") or "unknown")
+    inclusion_parse = "high" if inc != "unknown" else "low"
+    source_ref = "high" if column_count >= 2 else ("medium" if column_count == 1 else "low")
+    return {
+        "header_mapping": header_mapping,
+        "quantity_parse": quantity_parse,
+        "item_normalization": item_normalization,
+        "inclusion_parse": inclusion_parse,
+        "source_ref": source_ref,
+    }
+
+
+def _parser_explanation(
+    header_map: dict[str, int],
+    row_kind: RowKind,
+    qty_obj: dict[str, Any],
+    inclusion_status: str,
+    item_kind: str | None,
+    comparison_key: str,
+) -> list[str]:
+    keys = ",".join(sorted(header_map.keys()))
+    return [
+        f"header_keys:{keys}",
+        f"row_kind:{row_kind}",
+        f"quantity_status:{qty_obj.get('quantity_status')}",
+        f"inclusion_status:{inclusion_status}",
+        f"item_kind:{item_kind or 'other'}",
+        f"comparison_key:{comparison_key}",
+    ]
+
+
+def _source_row_key(filename: str, sheet_name: str, row_number: int) -> str:
+    return f"{filename}:{sheet_name}:row_{row_number}"
+
+
+def _vendor_line_universal_fields(
+    header_map: dict[str, int],
+    row_kind: RowKind,
+    qty_obj: dict[str, Any],
+    inc_obj: dict[str, Any],
+    mat: dict[str, Any],
+    inclusion_status: str,
+    included_bool: bool | None,
+    column_count: int,
+    filename: str,
+    sheet_name: str,
+    row_number: int,
+) -> dict[str, Any]:
+    ck = _comparison_key(mat, mat.get("normalized_item") or "")
+    cr = _commercial_role(mat, inclusion_status, row_kind, inc_obj)
+    sr = _scope_relevance(mat, included_bool, inclusion_status, row_kind)
+    cd = _confidence_dimensions(header_map, qty_obj, mat, inc_obj, column_count)
+    expl = _parser_explanation(
+        header_map,
+        row_kind,
+        qty_obj,
+        inclusion_status,
+        mat.get("item_kind"),
+        ck,
+    )
+    return {
+        "comparison_key": ck,
+        "commercial_role": cr,
+        "scope_relevance": sr,
+        "authority_boundary": "vendor_quote_can_conflict_but_not_define_scope",
+        "confidence_dimensions": cd,
+        "parser_explanation": expl,
+        "source_row_key": _source_row_key(filename, sheet_name, row_number),
+    }
 
 
 def _scan_quote_metadata(rows: list[list[Any]], max_rows: int = 18) -> dict[str, Any]:
@@ -597,7 +873,7 @@ def _scan_quote_metadata(rows: list[list[Any]], max_rows: int = 18) -> dict[str,
 
 class QuoteParser(BaseParser):
     parser_name = "quote"
-    parser_version = "quote_parser_v1_3"
+    parser_version = "quote_parser_v1_4_1"
     capability = ParserCapability(
         parser_name=parser_name,
         parser_version=parser_version,
@@ -906,6 +1182,20 @@ class QuoteParser(BaseParser):
 
         used_keys = {k for k, v in values.items() if str(v or "").strip()}
         columns = {k: get_column_letter(header_map[k] + 1) for k in used_keys if k in header_map}
+        column_count = len(columns)
+        universals = _vendor_line_universal_fields(
+            header_map=header_map,
+            row_kind=row_kind,
+            qty_obj=qty_obj,
+            inc_obj=inc_obj,
+            mat=mat,
+            inclusion_status=inclusion_status,
+            included_bool=included_bool,
+            column_count=column_count,
+            filename=filename,
+            sheet_name=sheet_name,
+            row_number=row_number,
+        )
 
         source_ref = SourceRef(
             id=stable_id("src", artifact_id, sheet_name, row_number),
@@ -913,13 +1203,20 @@ class QuoteParser(BaseParser):
             artifact_type=artifact_type,
             filename=filename,
             locator={"sheet": sheet_name, "row": row_number, "columns": columns},
-            extraction_method="quote_header_mapping_v1_3",
+            extraction_method="quote_header_mapping_v1_4_1",
             parser_version=self.parser_version,
         )
 
         atoms: list[EvidenceAtom] = []
 
-        def append_atom(atom_type: AtomType, raw_text: str, value: dict[str, Any], confidence: float, flags: list[str]) -> None:
+        def append_atom(
+            atom_type: AtomType,
+            raw_text: str,
+            value: dict[str, Any],
+            confidence: float,
+            flags: list[str],
+            review_status: ReviewStatus,
+        ) -> None:
             atoms.append(
                 EvidenceAtom(
                     id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, atom_type.value, raw_text),
@@ -933,7 +1230,7 @@ class QuoteParser(BaseParser):
                     source_refs=[source_ref],
                     authority_class=AuthorityClass.vendor_quote,
                     confidence=confidence,
-                    review_status=ReviewStatus.auto_accepted,
+                    review_status=review_status,
                     review_flags=flags,
                     parser_version=self.parser_version,
                 )
@@ -961,8 +1258,10 @@ class QuoteParser(BaseParser):
             "shielding": mat.get("shielding"),
             "jacket_rating": mat.get("jacket_rating"),
             "item_kind": mat.get("item_kind"),
+            "port_count": mat.get("port_count"),
             "is_scope_pollution_candidate": mat.get("is_scope_pollution_candidate"),
             "parser_diagnostics": diagnostics[:12],
+            **universals,
         }
 
         has_line = bool(
@@ -980,6 +1279,25 @@ class QuoteParser(BaseParser):
             flags.append("quote_parser:ambiguous_quantity")
         if up_money.get("price_status") == "malformed" and unit_price_raw.strip():
             flags.append("quote_parser:malformed_money")
+        if ext_money.get("price_status") == "malformed" and extended_raw.strip():
+            flags.append("quote_parser:malformed_extended_money")
+        if _price_math_mismatch(qty_obj, up_money, ext_money):
+            flags.append("quote_parser:price_math_mismatch")
+
+        review_status = (
+            ReviewStatus.needs_review
+            if _quote_row_needs_review(
+                row_kind,
+                qty_obj,
+                inclusion_status,
+                unit_price_raw,
+                extended_raw,
+                up_money,
+                ext_money,
+                flags,
+            )
+            else ReviewStatus.auto_accepted
+        )
 
         if has_line and row_kind in {"real_line_item", "allowance", "alternate", "option", "excluded", "included_no_qty", "malformed"}:
             append_atom(
@@ -988,6 +1306,7 @@ class QuoteParser(BaseParser):
                 vli_value,
                 0.88 if not flags else 0.72,
                 flags,
+                review_status,
             )
 
         q_emit = qty_obj.get("quantity") is not None or qty_obj.get("quantity_status") in {
@@ -1001,12 +1320,30 @@ class QuoteParser(BaseParser):
         if q_emit or (quantity_raw != "" and quantity_raw is not None):
             qval = dict(qty_obj)
             qval["legacy"] = parse_quantity(quantity_raw) if quantity_raw else parse_quantity(str(qty_obj.get("quantity") or ""))
+            qval.update(
+                {
+                    "comparison_key": universals["comparison_key"],
+                    "commercial_role": universals["commercial_role"],
+                    "scope_relevance": universals["scope_relevance"],
+                    "authority_boundary": universals["authority_boundary"],
+                    "source_row_key": universals["source_row_key"],
+                    "comparison_basis": "vendor_proposed_quantity",
+                    "included": included_bool,
+                    "inclusion_status": inclusion_status,
+                    "item_kind": mat.get("item_kind"),
+                    "cable_category": mat.get("cable_category"),
+                    "shielding": mat.get("shielding"),
+                    "jacket_rating": mat.get("jacket_rating"),
+                    "normalized_item": mat.get("normalized_item"),
+                }
+            )
             append_atom(
                 AtomType.quantity,
                 f"Quantity {qty_obj.get('quantity_raw') or quantity_raw}",
                 qval,
                 0.88 if not qty_obj.get("uncertain") else 0.7,
                 list(flags),
+                review_status,
             )
 
         if lead_time:
@@ -1016,5 +1353,6 @@ class QuoteParser(BaseParser):
                 {"lead_time": lead_time},
                 0.85,
                 [],
+                ReviewStatus.auto_accepted,
             )
         return atoms
