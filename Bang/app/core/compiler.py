@@ -236,8 +236,9 @@ def compile_project(
 
     with telemetry.stage("packet_certificates", input_count=len(packets)) as stage:
         atom_by_id = {atom.id: atom for atom in atoms}
+        edge_by_id = {edge.id: edge for edge in edges}
         for packet in packets:
-            packet.certificate = build_packet_certificate(packet, atom_by_id)
+            packet.certificate = build_packet_certificate(packet, atom_by_id, edge_by_id=edge_by_id)
             packet_atoms = [
                 atom_by_id[atom_id]
                 for atom_id in (packet.supporting_atom_ids + packet.contradicting_atom_ids)

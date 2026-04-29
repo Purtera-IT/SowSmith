@@ -24,10 +24,13 @@ def _atom(
     text: str,
     confidence: float = 0.9,
     quantity: float | None = None,
+    value_extra: dict | None = None,
 ) -> EvidenceAtom:
     value = {"text": text}
     if quantity is not None:
         value["quantity"] = quantity
+    if value_extra:
+        value.update(value_extra)
     locator = {"quoted": authority == AuthorityClass.quoted_old_email}
     return EvidenceAtom(
         id=atom_id,
@@ -57,7 +60,15 @@ def _atom(
     )
 
 
-def _edge(edge_id: str, edge_type: EdgeType, from_id: str, to_id: str, reason: str) -> EvidenceEdge:
+def _edge(
+    edge_id: str,
+    edge_type: EdgeType,
+    from_id: str,
+    to_id: str,
+    reason: str,
+    *,
+    metadata: dict | None = None,
+) -> EvidenceEdge:
     return EvidenceEdge(
         id=edge_id,
         project_id="proj_1",
@@ -66,6 +77,7 @@ def _edge(edge_id: str, edge_type: EdgeType, from_id: str, to_id: str, reason: s
         edge_type=edge_type,
         reason=reason,
         confidence=0.9,
+        metadata=dict(metadata or {}),
     )
 
 
@@ -281,3 +293,65 @@ def test_transcript_packets_and_governance_rules() -> None:
     assert "customer_current_authored" in scope_packet_cert.governing_rationale
     assert scope_packet_cert.authority_path
     assert "dimensions" in scope_packet_cert.authority_path[0]
+
+
+def test_material_aggregate_edge_one_packet_roster_governs_vendor_contradicts() -> None:
+    roster = _atom(
+        "r_mat",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["site:sl"],
+        text="rj45 aggregate 72",
+        quantity=72,
+        value_extra={"normalized_item": "rj45", "aggregate": True},
+    )
+    vendor = _atom(
+        "v_mat",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["site:sl"],
+        text="rj45 vendor 68",
+        quantity=68,
+        value_extra={"normalized_item": "rj45", "inclusion_status": "included"},
+    )
+    md = {
+        "identity": "rj45",
+        "roster_quantity": 72.0,
+        "vendor_quantity": 68.0,
+        "delta": 4.0,
+        "roster_atom_id": "r_mat",
+        "vendor_atom_ids": ["v_mat"],
+        "vendor_excluded_atom_ids": [],
+        "roster_authority_class": AuthorityClass.approved_site_roster.value,
+        "vendor_authority_class": AuthorityClass.vendor_quote.value,
+        "comparison_basis": "aggregate_roster_vs_summed_vendor_quote",
+        "included_vendor_line_filter": "primary",
+        "preferred_packet_family": "quantity_conflict",
+    }
+    edge = _edge(
+        "e_mat",
+        EdgeType.contradicts,
+        "r_mat",
+        "v_mat",
+        "RJ45: approved_site_roster aggregate 72 vs vendor_quote primary-line total 68; vendor quote short by 4.",
+        metadata=md,
+    )
+    packets = build_packets("proj_1", [roster, vendor], [], [edge], attach_metadata=True)
+    mat_pkts = [p for p in packets if p.anchor_key.startswith("material:rj45")]
+    assert len(mat_pkts) == 1
+    p = mat_pkts[0]
+    assert p.family == PacketFamily.quantity_conflict
+    assert p.status == PacketStatus.needs_review
+    assert p.governing_atom_ids == ["r_mat"]
+    assert p.contradicting_atom_ids == ["v_mat"]
+    assert p.certificate is not None
+    cert = p.certificate
+    assert "72" in cert.existence_reason and "68" in cert.existence_reason
+    assert cert.contradiction_summary and "delta=4" in cert.contradiction_summary
+    assert "approved_site_roster" in cert.governing_rationale.lower()
+    assert "RunbookGen.site_steps" in cert.blast_radius
+    assert "AtlasDispatch.site_readiness" in cert.blast_radius
+    assert "OrbitBrief.scope_truth" in cert.blast_radius
+    assert "SOWSmith.scope_clause" in cert.blast_radius
+    assert set(cert.minimal_sufficient_atom_ids) == {"r_mat", "v_mat"}
+    assert "roster_vendor_aggregate_mismatch" in p.review_flags

@@ -146,7 +146,7 @@ def validate_compile_result(result: CompileResult, source_files_available: bool 
             messages.append(f"WARNING: Packet {packet.id} has contradictions")
         if packet.family == PacketFamily.vendor_mismatch:
             messages.append(f"WARNING: Packet {packet.id} vendor_mismatch exists")
-        if packet.family == PacketFamily.quantity_conflict and certificate is not None:
+        if packet.family in (PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch) and certificate is not None:
             quantities = [
                 atom_by_id[aid].value.get("quantity")
                 for aid in referenced_ids
@@ -154,11 +154,11 @@ def validate_compile_result(result: CompileResult, source_files_available: bool 
             ]
             numeric = [q for q in quantities if isinstance(q, (int, float))]
             if len(numeric) >= 2:
-                reason_text = certificate.existence_reason
+                reason_text = (certificate.existence_reason or "") + " " + (certificate.contradiction_summary or "")
                 numeric_tokens = re.findall(r"\d+(?:\.\d+)?", reason_text)
                 if len(set(numeric_tokens)) < 2:
                     messages.append(
-                        f"ERROR: Packet {packet.id} quantity_conflict certificate must mention both quantity values"
+                        f"ERROR: Packet {packet.id} {packet.family.value} certificate must mention both quantity values"
                     )
         if packet.family == PacketFamily.scope_exclusion and certificate is not None:
             rationale = certificate.governing_rationale.lower()
@@ -180,7 +180,12 @@ def validate_compile_result(result: CompileResult, source_files_available: bool 
                 action_atom = next((atom for atom in packet_atoms if atom.atom_type.value == "action_item"), None)
                 if action_atom is not None:
                     owner = str(action_atom.value.get("owner", "unknown"))
-            expected_signature = make_anchor_signature(packet.family, packet_atoms, owner=owner)
+            material_identity = None
+            if packet.anchor_signature and packet.anchor_signature.canonical_key.startswith("material:"):
+                material_identity = packet.anchor_signature.canonical_key.split(":", 1)[1]
+            expected_signature = make_anchor_signature(
+                packet.family, packet_atoms, owner=owner, material_identity=material_identity
+            )
             if packet.anchor_signature.hash != expected_signature.hash:
                 messages.append(f"ERROR: Packet {packet.id} anchor_signature hash mismatch")
             if packet.anchor_key != packet.anchor_signature.canonical_key:

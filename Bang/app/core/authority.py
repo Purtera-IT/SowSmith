@@ -345,6 +345,47 @@ def compare_atoms(a: EvidenceAtom, b: EvidenceAtom, context: dict[str, Any] | No
             losing_authority_class=b.authority_class,
         )
 
+    packet_family: PacketFamily | None = None
+    if context:
+        pf = context.get("packet_family")
+        if isinstance(pf, PacketFamily):
+            packet_family = pf
+        elif isinstance(pf, str):
+            try:
+                packet_family = PacketFamily(pf)
+            except ValueError:
+                packet_family = None
+
+    # Rule: approved_site_roster quantity always governs over vendor_quote in quantity_conflict
+    # and vendor_mismatch packets (vendor reveals mismatch; roster/addendum governs scoped quantity).
+    if (
+        packet_family in (PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch)
+        and a.atom_type == AtomType.quantity
+        and b.atom_type == AtomType.quantity
+    ):
+        if (
+            a.authority_class == AuthorityClass.approved_site_roster
+            and b.authority_class == AuthorityClass.vendor_quote
+        ):
+            return AuthorityDecision(
+                governing_atom_id=a.id,
+                losing_atom_id=b.id,
+                reason="approved_site_roster governs over vendor_quote for scoped quantity vs vendor line items",
+                governing_authority_class=a.authority_class,
+                losing_authority_class=b.authority_class,
+            )
+        if (
+            b.authority_class == AuthorityClass.approved_site_roster
+            and a.authority_class == AuthorityClass.vendor_quote
+        ):
+            return AuthorityDecision(
+                governing_atom_id=b.id,
+                losing_atom_id=a.id,
+                reason="approved_site_roster governs over vendor_quote for scoped quantity vs vendor line items",
+                governing_authority_class=b.authority_class,
+                losing_authority_class=a.authority_class,
+            )
+
     # Rule: meeting_note cannot outrank stronger authorities on same topic.
     if same_topic and a.authority_class == AuthorityClass.meeting_note and b.authority_class in MEETING_NOTE_NEVER_BEATS:
         return AuthorityDecision(

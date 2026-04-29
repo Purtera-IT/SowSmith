@@ -319,6 +319,7 @@ class EvidenceEdge(BaseModel):
     edge_type: EdgeType
     reason: str
     confidence: float = Field(ge=0.0, le=1.0)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class AuthorityRankedAtom(BaseModel):

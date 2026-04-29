@@ -54,7 +54,7 @@ def create_demo_project(base_dir: Path) -> Path:
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = "site_roster"
-    sheet.append(["Site", "Floor", "Device", "Quantity", "Access Window", "Scope"])
+    sheet.append(["Site", "Floor", "Hostname", "Quantity", "Access Window", "Scope"])
     sheet.append(["Main Campus", "1", "IP Camera", "50", "Weekdays 8am-5pm", "Install"])
     sheet.append(["West Wing", "2", "IP Camera", "41", "Escort required", "Install"])
     sheet.append(["TOTAL", "", "", "91", "", ""])

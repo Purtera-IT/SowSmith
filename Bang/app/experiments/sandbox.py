@@ -233,8 +233,9 @@ def run_extraction_sandbox(
     edges = build_edges(project_id=baseline.project_id, atoms=hypothetical_atoms, entities=entities)
     packets = build_packets(project_id=baseline.project_id, atoms=hypothetical_atoms, entities=entities, edges=edges, attach_metadata=False)
     atom_by_id = {atom.id: atom for atom in hypothetical_atoms}
+    edge_by_id = {e.id: e for e in edges}
     for packet in packets:
-        packet.certificate = build_packet_certificate(packet, atom_by_id)
+        packet.certificate = build_packet_certificate(packet, atom_by_id, edge_by_id=edge_by_id)
         packet_atoms = [
             atom_by_id[atom_id]
             for atom_id in (packet.supporting_atom_ids + packet.contradicting_atom_ids)

@@ -21,10 +21,13 @@ def _atom(
     entity_keys: list[str],
     quantity: float | None = None,
     text: str = "text",
+    value_extra: dict | None = None,
 ) -> EvidenceAtom:
-    value = {"text": text}
+    value: dict[str, object] = {"text": text}
     if quantity is not None:
         value["quantity"] = quantity
+    if value_extra:
+        value.update(value_extra)
     locator = {}
     if authority == AuthorityClass.quoted_old_email:
         locator["quoted"] = True
@@ -113,6 +116,182 @@ def test_aggregate_scoped_quantity_contradicts_vendor_quantity() -> None:
         e.reason == "Aggregate scoped quantity 91 does not match vendor quantity 72 for device:ip_camera"
         for e in contradictions
     )
+
+
+def test_material_identity_roster_vendor_quantity_contradictions() -> None:
+    roster_rj = _atom(
+        "r_rj",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["connector:rj45"],
+        quantity=72,
+        text="RJ45 total",
+        value_extra={"normalized_item": "rj45", "aggregate": True},
+    )
+    vendor_rj = _atom(
+        "v_rj",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["part:line1"],
+        quantity=68,
+        text="vendor rj45",
+        value_extra={"normalized_item": "rj45"},
+    )
+    roster_utp = _atom(
+        "r_utp",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["material:cat6_utp"],
+        quantity=66,
+        text="utp total",
+        value_extra={"normalized_item": "cat6_utp", "aggregate": True},
+    )
+    vendor_utp = _atom(
+        "v_utp",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["part:utp"],
+        quantity=60,
+        text="vendor utp",
+        value_extra={"normalized_item": "cat6_utp"},
+    )
+    roster_stp = _atom(
+        "r_stp",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["cable:cat6_stp"],
+        quantity=6,
+        text="stp total",
+        value_extra={"normalized_item": "cat6_stp", "aggregate": True},
+    )
+    vendor_stp = _atom(
+        "v_stp",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["part:stp"],
+        quantity=8,
+        text="vendor stp",
+        value_extra={"normalized_item": "cat6_stp"},
+    )
+    edges = build_edges(
+        "proj_copper",
+        [roster_rj, vendor_rj, roster_utp, vendor_utp, roster_stp, vendor_stp],
+        [],
+    )
+    mat_edges = [
+        e
+        for e in edges
+        if e.edge_type == EdgeType.contradicts
+        and (e.metadata or {}).get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote"
+    ]
+    assert len(mat_edges) == 3
+    by_id = {(e.from_atom_id, e.to_atom_id): e for e in mat_edges}
+    assert ("r_rj", "v_rj") in by_id
+    assert ("r_utp", "v_utp") in by_id
+    assert ("r_stp", "v_stp") in by_id
+    assert all(e.from_atom_id.startswith("r_") for e in mat_edges)
+    assert all(e.to_atom_id.startswith("v_") for e in mat_edges)
+    for e in mat_edges:
+        md = e.metadata
+        assert md.get("identity") in {"rj45", "cat6_utp", "cat6_stp"}
+        assert "roster_quantity" in md and "vendor_quantity" in md and "delta" in md
+        assert md.get("preferred_packet_family") in ("quantity_conflict", "vendor_mismatch")
+
+
+def test_material_identity_no_edge_when_totals_match() -> None:
+    roster = _atom(
+        "r1",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["connector:rj45"],
+        quantity=10,
+        value_extra={"normalized_item": "rj45", "aggregate": True},
+    )
+    vendor = _atom(
+        "v1",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["part:p"],
+        quantity=10,
+        value_extra={"normalized_item": "rj45"},
+    )
+    edges = build_edges("p", [roster, vendor], [])
+    mat = [
+        e
+        for e in edges
+        if (e.metadata or {}).get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote"
+    ]
+    assert not mat
+
+
+def test_material_identity_does_not_cross_link_items() -> None:
+    roster_rj = _atom(
+        "r_rj",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=[],
+        quantity=72,
+        value_extra={"normalized_item": "rj45", "aggregate": True},
+    )
+    vendor_utp = _atom(
+        "v_utp",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=[],
+        quantity=60,
+        value_extra={"normalized_item": "cat6_utp"},
+    )
+    edges = build_edges("p", [roster_rj, vendor_utp], [])
+    mat = [
+        e
+        for e in edges
+        if (e.metadata or {}).get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote"
+    ]
+    assert not mat
+
+
+def test_vendor_optional_line_excluded_from_primary_material_total() -> None:
+    """Optional vendor rows must not inflate primary vendor total used for roster comparison."""
+    roster = _atom(
+        "r_rj",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["site:sl"],
+        quantity=100,
+        text="rj45 roster",
+        value_extra={"normalized_item": "rj45", "aggregate": True},
+    )
+    base = _atom(
+        "v_base",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["site:sl"],
+        quantity=10,
+        text="included rj45",
+        value_extra={"normalized_item": "rj45", "inclusion_status": "included"},
+    )
+    optional_line = _atom(
+        "v_opt",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.vendor_quote,
+        entity_keys=["site:sl"],
+        quantity=999,
+        text="optional rj45",
+        value_extra={"normalized_item": "rj45", "inclusion_status": "optional"},
+    )
+    edges = build_edges("proj_opt", [roster, base, optional_line], [])
+    mat = [
+        e
+        for e in edges
+        if e.edge_type == EdgeType.contradicts
+        and (e.metadata or {}).get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote"
+    ]
+    assert len(mat) == 1
+    e = mat[0]
+    assert e.metadata.get("vendor_quantity") == 10.0
+    assert e.metadata.get("roster_quantity") == 100.0
+    assert "v_base" in e.metadata.get("vendor_atom_ids", [])
+    assert "v_opt" in e.metadata.get("vendor_excluded_atom_ids", [])
 
 
 def test_exclusion_creates_excludes_edge_and_constraint_requires() -> None:

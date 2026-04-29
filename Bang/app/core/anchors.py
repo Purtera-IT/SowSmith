@@ -56,10 +56,18 @@ def make_anchor_signature(
     atoms: list[EvidenceAtom],
     *,
     owner: str | None = None,
+    material_identity: str | None = None,
 ) -> AnchorSignature:
     entity_keys = sorted({key for atom in atoms for key in atom.entity_keys})
 
-    if family in {PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch}:
+    if family in {PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch} and material_identity:
+        site_key = _best_site_key(atoms)
+        canonical_key = f"material:{material_identity}"
+        anchor_type = "material"
+        normalized_topic = material_identity
+        scope_dimension = "quantity"
+        entity_keys = sorted({site_key, canonical_key})
+    elif family in {PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch}:
         canonical_key = _best_device_key(atoms)
         anchor_type = "device"
         normalized_topic = canonical_key.split(":", 1)[1]

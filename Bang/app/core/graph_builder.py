@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import re
+from typing import Any
+
 from app.domain import get_active_domain_pack
 from app.core.ids import stable_id
 from app.core.normalizers import normalize_text
-from app.core.schemas import AuthorityClass, EdgeType, EntityRecord, EvidenceAtom, EvidenceEdge
+from app.core.schemas import AtomType, AuthorityClass, EdgeType, EntityRecord, EvidenceAtom, EvidenceEdge
 from app.semantic.linker import propose_semantic_link_candidates
 
 
@@ -15,6 +18,118 @@ def _quantity_value(atom: EvidenceAtom) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _quantity_material_identity(atom: EvidenceAtom) -> str | None:
+    """Stable material/line identity from atom value (normalized_item preferred)."""
+    if atom.atom_type != AtomType.quantity:
+        return None
+    v = atom.value if isinstance(atom.value, dict) else {}
+    ni = v.get("normalized_item")
+    if isinstance(ni, str) and ni.strip():
+        return ni.strip().lower()
+    item = v.get("item")
+    if isinstance(item, str) and item.strip():
+        slug = re.sub(r"[^a-z0-9]+", "_", normalize_text(item).lower()).strip("_")
+        return slug or None
+    return None
+
+
+def _canonical_material_key(atom: EvidenceAtom) -> str | None:
+    """Map roster and vendor quantity identities onto one key (slug + cable/RJ45 heuristics)."""
+    base = _quantity_material_identity(atom)
+    if not base:
+        return None
+    s = re.sub(r"[^a-z0-9]+", "_", base.lower()).strip("_")
+    if not s:
+        return None
+    if s == "rj45" or s.startswith("rj45_") or "_rj45_" in s or s.endswith("_rj45") or re.search(r"(^|_)rj45(_|$)", s):
+        return "rj45"
+    if "cat6a" in s:
+        return "cat6a"
+    if "cat6" in s and "utp" in s:
+        return "cat6_utp"
+    if "cat6" in s and "stp" in s:
+        return "cat6_stp"
+    if "cat6" in s and "shield" in s:
+        return "cat6_stp"
+    if "cat6" in s:
+        return "cat6"
+    if "fiber" in s or "strand" in s:
+        return "fiber"
+    return s
+
+
+_VENDOR_PRIMARY_FILTER_LABEL = (
+    "primary_included_unknown_numeric_excluding_optional_alternate_allowance_excluded_tbd_nic_by_others"
+)
+
+
+def _vendor_quote_line_counts_for_primary_total(atom: EvidenceAtom) -> bool:
+    """Vendor lines included in primary quote totals (excludes optional/alternate/allowance/excluded/TBD-only rows)."""
+    if atom.authority_class != AuthorityClass.vendor_quote or atom.atom_type != AtomType.quantity:
+        return False
+    v = atom.value if isinstance(atom.value, dict) else {}
+    inc = str(v.get("inclusion_status") or "").lower()
+    if inc in {"excluded", "optional", "allowance", "tbd"}:
+        return False
+    if v.get("included") is False:
+        return False
+    qs = str(v.get("quantity_status") or "").lower()
+    if qs in {"allowance", "tbd", "not_applicable", "included_no_qty"}:
+        return False
+    if _quantity_value(atom) is None:
+        return False
+    blob = normalize_text(f"{atom.raw_text} {v.get('notes', '')} {v.get('item', '')}").lower()
+    if re.search(r"\b(not included|by others|\bnics?\b|optional|alternate|allowance only)\b", blob):
+        if inc not in {"included"} and v.get("included") is not True:
+            return False
+    return True
+
+
+def _identity_display(identity: str) -> str:
+    if identity == "rj45":
+        return "RJ45"
+    if identity == "cat6_utp":
+        return "Cat6 UTP"
+    if identity == "cat6_stp":
+        return "Cat6 STP"
+    return identity
+
+
+def _roster_vendor_material_totals(
+    ordered: list[EvidenceAtom], identity: str
+) -> tuple[EvidenceAtom | None, float, list[EvidenceAtom], float, list[EvidenceAtom]]:
+    """Roster anchor (aggregate when present), roster total, primary vendor atoms, primary vendor total, excluded vendor atoms."""
+    roster = [
+        a
+        for a in ordered
+        if a.authority_class == AuthorityClass.approved_site_roster
+        and a.atom_type == AtomType.quantity
+        and _canonical_material_key(a) == identity
+        and _quantity_value(a) is not None
+    ]
+    vendor_all = [
+        a
+        for a in ordered
+        if a.authority_class == AuthorityClass.vendor_quote
+        and a.atom_type == AtomType.quantity
+        and _canonical_material_key(a) == identity
+        and _quantity_value(a) is not None
+    ]
+    primary = [a for a in vendor_all if _vendor_quote_line_counts_for_primary_total(a)]
+    excluded = [a for a in vendor_all if a not in primary]
+    if not roster or not primary:
+        return None, 0.0, [], 0.0, excluded
+    vendor_primary_total = sum(float(_quantity_value(a)) for a in primary)
+    agg = [a for a in roster if isinstance(a.value, dict) and a.value.get("aggregate") is True]
+    if agg:
+        anchor = sorted(agg, key=lambda a: a.id)[0]
+        roster_total = sum(float(_quantity_value(a)) for a in agg)
+    else:
+        anchor = sorted(roster, key=lambda a: a.id)[0]
+        roster_total = sum(float(_quantity_value(a)) for a in roster)
+    return anchor, roster_total, primary, vendor_primary_total, excluded
 
 
 def _shared_keys(a: EvidenceAtom, b: EvidenceAtom) -> set[str]:
@@ -44,6 +159,8 @@ def _build_edge(
     to_atom: EvidenceAtom,
     reason: str,
     confidence: float,
+    *,
+    metadata: dict[str, Any] | None = None,
 ) -> EvidenceEdge:
     return EvidenceEdge(
         id=_edge_id(project_id, edge_type, from_atom.id, to_atom.id, reason),
@@ -53,6 +170,7 @@ def _build_edge(
         edge_type=edge_type,
         reason=reason,
         confidence=confidence,
+        metadata=dict(metadata or {}),
     )
 
 
@@ -226,6 +344,69 @@ def build_edges(project_id: str, atoms: list[EvidenceAtom], entities: list[Entit
             f"for {device_key}"
         )
         push(_build_edge(project_id, EdgeType.contradicts, from_atom, to_atom, reason, 0.95))
+
+    # Material / line-item identity: governing approved_site_roster vs vendor_quote (normalized_item).
+    # Roster aggregate row (when present) defines scope quantity; vendor is summed per identity; never reversed.
+    identities = sorted(
+        {
+            ident
+            for atom in ordered
+            if (ident := _canonical_material_key(atom)) is not None
+            and atom.atom_type == AtomType.quantity
+            and atom.authority_class
+            in {AuthorityClass.approved_site_roster, AuthorityClass.vendor_quote}
+        }
+    )
+    for identity in identities:
+        anchor, roster_total, primary_vendors, vendor_primary_total, excluded_vendors = _roster_vendor_material_totals(
+            ordered, identity
+        )
+        if anchor is None or not primary_vendors:
+            continue
+        if roster_total == vendor_primary_total:
+            continue
+        vendor_rep = sorted(primary_vendors, key=lambda a: a.id)[0]
+        r_display = int(roster_total) if roster_total.is_integer() else roster_total
+        v_display = int(vendor_primary_total) if vendor_primary_total.is_integer() else vendor_primary_total
+        delta = float(roster_total) - float(vendor_primary_total)
+        disp = _identity_display(identity)
+        if delta > 0:
+            delta_note = f"vendor quote short by {int(delta) if float(delta).is_integer() else round(delta, 4)}"
+        elif delta < 0:
+            over = -delta
+            oi = int(over) if float(over).is_integer() else round(over, 4)
+            delta_note = f"vendor quote over by {oi} vs addendum (differs by +{oi})"
+        else:
+            delta_note = "quantities match"
+        reason = (
+            f"{disp}: approved_site_roster aggregate {r_display:g} vs vendor_quote primary-line total {v_display:g}; "
+            f"{delta_note}."
+        )
+        meta: dict[str, Any] = {
+            "identity": identity,
+            "roster_quantity": float(roster_total),
+            "vendor_quantity": float(vendor_primary_total),
+            "delta": float(delta),
+            "roster_atom_id": anchor.id,
+            "vendor_atom_ids": sorted(a.id for a in primary_vendors),
+            "vendor_excluded_atom_ids": sorted(a.id for a in excluded_vendors),
+            "roster_authority_class": AuthorityClass.approved_site_roster.value,
+            "vendor_authority_class": AuthorityClass.vendor_quote.value,
+            "comparison_basis": "aggregate_roster_vs_summed_vendor_quote",
+            "included_vendor_line_filter": _VENDOR_PRIMARY_FILTER_LABEL,
+            "preferred_packet_family": "quantity_conflict" if identity == "rj45" else "vendor_mismatch",
+        }
+        push(
+            _build_edge(
+                project_id,
+                EdgeType.contradicts,
+                anchor,
+                vendor_rep,
+                reason,
+                0.96,
+                metadata=meta,
+            )
+        )
 
     semantic_candidates = propose_semantic_link_candidates(ordered, domain_pack=pack)
     for candidate in semantic_candidates:

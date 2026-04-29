@@ -4,7 +4,7 @@ from typing import Any
 
 from app.core.authority import authority_rank, score_authority
 from app.domain import get_active_domain_pack
-from app.core.schemas import AtomType, AuthorityClass, EvidenceAtom, EvidencePacket, PacketCertificate, PacketFamily, PacketStatus
+from app.core.schemas import AtomType, AuthorityClass, EvidenceAtom, EvidenceEdge, EvidencePacket, PacketCertificate, PacketFamily, PacketStatus
 
 CERTIFICATE_VERSION = "packet_certificate_v1"
 
@@ -36,6 +36,7 @@ _BLAST_RADIUS_BY_FAMILY: dict[PacketFamily, list[str]] = {
         "OrbitBrief.scope_truth",
         "SOWSmith.scope_clause",
         "AtlasDispatch.site_readiness",
+        "RunbookGen.site_steps",
     ],
     PacketFamily.missing_info: [
         "OrbitBrief.scope_truth",
@@ -68,7 +69,27 @@ def _atom_ids(packet: EvidencePacket) -> list[str]:
     return sorted(set(packet.governing_atom_ids + packet.supporting_atom_ids + packet.contradicting_atom_ids))
 
 
-def _exists_reason(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) -> str:
+def _material_edge_metadata(packet: EvidencePacket, edge_by_id: dict[str, EvidenceEdge]) -> dict[str, Any] | None:
+    for eid in packet.related_edge_ids or []:
+        edge = edge_by_id.get(eid)
+        if edge is None:
+            continue
+        md = edge.metadata or {}
+        if md.get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote":
+            return md
+    return None
+
+
+def _exists_reason(packet: EvidencePacket, _atom_by_id: dict[str, EvidenceAtom], md: dict[str, Any] | None) -> str:
+    if md:
+        ident = md.get("identity", "material")
+        rq = md.get("roster_quantity")
+        vq = md.get("vendor_quantity")
+        d = md.get("delta")
+        return (
+            f"Created because roster aggregate and vendor primary-line totals diverge for {ident}: "
+            f"roster_qty={rq}, vendor_primary_sum={vq}, delta={d}. {packet.reason.rstrip('.')}."
+        )
     if packet.family == PacketFamily.quantity_conflict:
         return f"Created because {packet.reason.rstrip('.')}."
     if packet.family == PacketFamily.scope_exclusion:
@@ -78,7 +99,11 @@ def _exists_reason(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) 
     if packet.family == PacketFamily.site_access:
         return f"Created because access constraints were identified for {packet.anchor_key}."
     if packet.family == PacketFamily.vendor_mismatch:
-        return f"Created because vendor_quote quantity does not align with scoped quantity for {packet.anchor_key}."
+        base = f"Created because vendor_quote quantity does not align with scoped quantity for {packet.anchor_key}."
+        detail = packet.reason.strip() if packet.reason else ""
+        if detail:
+            return f"{base} Detail: {detail.rstrip('.')}."
+        return base
     if packet.family == PacketFamily.missing_info:
         return f"Created because open question evidence remains unresolved for {packet.anchor_key}."
     if packet.family == PacketFamily.meeting_decision:
@@ -93,12 +118,20 @@ def _exists_reason(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) 
     return packet.reason
 
 
-def _governing_rationale(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) -> str:
+def _governing_rationale(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom], md: dict[str, Any] | None) -> str:
     if not packet.governing_atom_ids:
         return "No governing atom selected; packet remains non-governing."
     governing = atom_by_id.get(packet.governing_atom_ids[0])
     if governing is None:
         return "Governing atom id is missing from atom map."
+    if md or (
+        packet.anchor_key.startswith("material:")
+        and packet.family in (PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch)
+    ):
+        return (
+            "approved_site_roster (approved addendum / site roster aggregate) governs scoped material quantity; "
+            "vendor_quote reveals mismatch or coverage gaps and must not govern in-scope quantity."
+        )
     if packet.family == PacketFamily.scope_exclusion and governing.authority_class == AuthorityClass.customer_current_authored:
         return "customer_current_authored outranks approved_site_roster for exclusion decisions."
     if packet.family == PacketFamily.scope_exclusion:
@@ -116,8 +149,21 @@ def _governing_rationale(packet: EvidencePacket, atom_by_id: dict[str, EvidenceA
     )
 
 
-def _minimal_sufficient_ids(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) -> list[str]:
-    minimal: list[str] = []
+def _minimal_sufficient_ids(
+    packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom], md: dict[str, Any] | None = None
+) -> list[str]:
+    if md and md.get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote":
+        minimal: list[str] = []
+        rid = md.get("roster_atom_id")
+        if isinstance(rid, str) and rid in atom_by_id:
+            minimal.append(rid)
+        for vid in sorted(md.get("vendor_atom_ids") or []):
+            if isinstance(vid, str) and vid in atom_by_id:
+                minimal.append(vid)
+        allowed_ids = set(packet.governing_atom_ids + packet.supporting_atom_ids + packet.contradicting_atom_ids)
+        return sorted([aid for aid in dict.fromkeys(minimal) if aid in allowed_ids])
+
+    minimal = []
     governing_ids = [aid for aid in packet.governing_atom_ids if aid in atom_by_id]
     contradicting_ids = [aid for aid in packet.contradicting_atom_ids if aid in atom_by_id]
     support_ids = [aid for aid in packet.supporting_atom_ids if aid in atom_by_id]
@@ -298,13 +344,25 @@ def _ambiguity_score(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]
     return max(0.0, min(1.0, round(score, 4)))
 
 
-def build_packet_certificate(packet: EvidencePacket, atom_by_id: dict[str, EvidenceAtom]) -> PacketCertificate:
+def build_packet_certificate(
+    packet: EvidencePacket,
+    atom_by_id: dict[str, EvidenceAtom],
+    edge_by_id: dict[str, EvidenceEdge] | None = None,
+) -> PacketCertificate:
     pack = get_active_domain_pack()
-    minimal_ids = _minimal_sufficient_ids(packet, atom_by_id)
-    contradiction_summary = None
-    if packet.contradicting_atom_ids:
+    edges_map = edge_by_id or {}
+    md = _material_edge_metadata(packet, edges_map)
+    minimal_ids = _minimal_sufficient_ids(packet, atom_by_id, md)
+    if md:
+        contradiction_summary = (
+            f"identity={md.get('identity')} roster_qty={md.get('roster_quantity')} "
+            f"vendor_primary_sum={md.get('vendor_quantity')} delta={md.get('delta')}"
+        )
+    elif packet.contradicting_atom_ids:
         contradiction_summary = f"{len(packet.contradicting_atom_ids)} contradicting atom(s) linked."
-    existence_reason = _exists_reason(packet, atom_by_id)
+    else:
+        contradiction_summary = None
+    existence_reason = _exists_reason(packet, atom_by_id, md)
     completeness = _evidence_completeness(packet, atom_by_id)
     ambiguity = _ambiguity_score(packet, atom_by_id, completeness)
     return PacketCertificate(
@@ -313,7 +371,7 @@ def build_packet_certificate(packet: EvidencePacket, atom_by_id: dict[str, Evide
         domain_pack_id=pack.pack_id,
         domain_pack_version=pack.version,
         existence_reason=existence_reason,
-        governing_rationale=_governing_rationale(packet, atom_by_id),
+        governing_rationale=_governing_rationale(packet, atom_by_id, md),
         minimal_sufficient_atom_ids=minimal_ids,
         contradiction_summary=contradiction_summary,
         authority_path=_authority_path(packet, atom_by_id),

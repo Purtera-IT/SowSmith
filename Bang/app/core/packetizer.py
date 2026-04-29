@@ -72,7 +72,7 @@ def _select_governing_atoms(
         return []
     best = winners[0]
     for atom in winners[1:]:
-        decision = compare_atoms(best, atom)
+        decision = compare_atoms(best, atom, context=context)
         best = best if decision.governing_atom_id == best.id else atom
     return [best]
 
@@ -88,6 +88,7 @@ def _build_packet(
     review_flags: list[str] | None = None,
     prefer_customer_exclusion: bool = False,
     owner: str | None = None,
+    material_identity: str | None = None,
 ) -> EvidencePacket:
     governing_atoms = _select_governing_atoms(
         atoms,
@@ -98,7 +99,7 @@ def _build_packet(
     support_ids = sorted({a.id for a in atoms if a.id not in set(contradicting_atom_ids or [])})
     contradicting_ids = sorted(set(contradicting_atom_ids or []))
     edge_ids = sorted({e.id for e in related_edges})
-    anchor_signature = make_anchor_signature(family, atoms, owner=owner)
+    anchor_signature = make_anchor_signature(family, atoms, owner=owner, material_identity=material_identity)
     anchor_type = anchor_signature.anchor_type
     anchor_key = anchor_signature.canonical_key
 
@@ -143,6 +144,17 @@ def _is_risky_action_item(atom: EvidenceAtom) -> bool:
     return any(token in text for token in ("scope", "add", "remove", "price", "cost", "commercial", "change"))
 
 
+def _is_material_roster_vendor_aggregate_edge(edge: EvidenceEdge) -> bool:
+    return (edge.metadata or {}).get("comparison_basis") == "aggregate_roster_vs_summed_vendor_quote"
+
+
+def _material_aggregate_review_flags(family: PacketFamily) -> list[str]:
+    flags = ["roster_vendor_aggregate_mismatch", "contradiction_present"]
+    if family == PacketFamily.vendor_mismatch:
+        flags.append("vendor_scope_quantity_mismatch")
+    return flags
+
+
 def build_packets(
     project_id: str,
     atoms: list[EvidenceAtom],
@@ -154,9 +166,46 @@ def build_packets(
     atom_by_id = {a.id: a for a in atoms}
     packets: list[EvidencePacket] = []
     consumed_by_conflict_or_exclusion: set[str] = set()
+    material_edge_ids = {e.id for e in edges if _is_material_roster_vendor_aggregate_edge(e)}
+
+    # 0) Material roster aggregate vs summed vendor primary lines (one packet per edge; metadata from graph).
+    for edge in edges:
+        if edge.id not in material_edge_ids:
+            continue
+        md = edge.metadata or {}
+        roster_id = md.get("roster_atom_id")
+        vendor_ids = md.get("vendor_atom_ids") or []
+        identity = md.get("identity")
+        pf = md.get("preferred_packet_family")
+        if not roster_id or not vendor_ids or not identity or not pf:
+            continue
+        roster = atom_by_id.get(roster_id)
+        vendor_atoms = [atom_by_id[i] for i in vendor_ids if i in atom_by_id]
+        if roster is None or not vendor_atoms:
+            continue
+        try:
+            family = PacketFamily(pf)
+        except ValueError:
+            continue
+        atoms_for_packet = [roster] + vendor_atoms
+        packet = _build_packet(
+            project_id=project_id,
+            family=family,
+            atoms=atoms_for_packet,
+            related_edges=[edge],
+            status=PacketStatus.needs_review,
+            reason=edge.reason or f"Roster aggregate vs vendor primary lines for {identity}.",
+            contradicting_atom_ids=sorted(vendor_ids),
+            review_flags=_material_aggregate_review_flags(family),
+            material_identity=str(identity),
+        )
+        packets.append(packet)
+        consumed_by_conflict_or_exclusion.update([roster_id, *vendor_ids])
 
     # 1) quantity_conflict
     for edge in edges:
+        if edge.id in material_edge_ids:
+            continue
         if edge.edge_type.value != "contradicts":
             continue
         a = atom_by_id.get(edge.from_atom_id)
@@ -180,6 +229,8 @@ def build_packets(
 
     # 2) vendor_mismatch
     for edge in edges:
+        if edge.id in material_edge_ids:
+            continue
         if edge.edge_type.value != "contradicts":
             continue
         a = atom_by_id.get(edge.from_atom_id)
@@ -404,8 +455,9 @@ def build_packets(
     result = list(dedup.values())
     if attach_metadata:
         atom_by_id = {atom.id: atom for atom in atoms}
+        edge_by_id = {e.id: e for e in edges}
         for packet in result:
-            packet.certificate = build_packet_certificate(packet, atom_by_id)
+            packet.certificate = build_packet_certificate(packet, atom_by_id, edge_by_id=edge_by_id)
             packet_atoms = [
                 atom_by_id[atom_id]
                 for atom_id in (packet.supporting_atom_ids + packet.contradicting_atom_ids)

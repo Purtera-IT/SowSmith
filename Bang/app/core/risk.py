@@ -103,6 +103,11 @@ def _severity(score: float) -> str:
 
 
 def _priority(severity: str, packet: EvidencePacket) -> int:
+    if packet.review_flags and "roster_vendor_aggregate_mismatch" in packet.review_flags:
+        if severity == "low":
+            return 3
+        if severity == "medium":
+            return 2
     if packet.family == PacketFamily.scope_inclusion and packet.status == PacketStatus.active:
         return 5
     if severity == "critical":
@@ -134,6 +139,9 @@ def score_packet_risk(packet: EvidencePacket, atoms: list[EvidenceAtom], edges: 
     if "vendor_scope_quantity_mismatch" in packet.review_flags:
         score += 0.15
         reasons.append("flag:vendor_scope_quantity_mismatch")
+    if "roster_vendor_aggregate_mismatch" in packet.review_flags:
+        score += 0.08
+        reasons.append("flag:roster_vendor_aggregate_mismatch")
     if "low_confidence_atom" in packet.review_flags:
         score += 0.05
         reasons.append("flag:low_confidence_atom")

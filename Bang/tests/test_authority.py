@@ -98,6 +98,54 @@ def test_approved_site_roster_beats_vendor_quote_for_scope() -> None:
     assert decision.governing_atom_id == roster_scope.id
 
 
+def test_roster_quantity_governs_vendor_in_quantity_conflict_context() -> None:
+    roster = _atom(
+        "roster_q",
+        authority=AuthorityClass.approved_site_roster,
+        atom_type=AtomType.quantity,
+        entity_keys=["connector:rj45"],
+        value={"quantity": 72, "normalized_item": "rj45", "aggregate": True},
+        raw_text="rj45 72",
+    )
+    vendor = _atom(
+        "vendor_q",
+        authority=AuthorityClass.vendor_quote,
+        atom_type=AtomType.quantity,
+        entity_keys=["part:x"],
+        value={"quantity": 68, "normalized_item": "rj45"},
+        raw_text="rj45 68",
+    )
+    from app.core.schemas import PacketFamily
+
+    decision = compare_atoms(roster, vendor, context={"packet_family": PacketFamily.quantity_conflict})
+    assert decision.governing_atom_id == roster.id
+    assert decision.losing_atom_id == vendor.id
+
+
+def test_roster_quantity_governs_vendor_in_vendor_mismatch_context() -> None:
+    roster = _atom(
+        "roster_utp",
+        authority=AuthorityClass.approved_site_roster,
+        atom_type=AtomType.quantity,
+        entity_keys=["material:cat6_utp"],
+        value={"quantity": 66, "normalized_item": "cat6_utp", "aggregate": True},
+        raw_text="cat6 utp 66",
+    )
+    vendor = _atom(
+        "vendor_utp",
+        authority=AuthorityClass.vendor_quote,
+        atom_type=AtomType.quantity,
+        entity_keys=["part:utp"],
+        value={"quantity": 60, "normalized_item": "cat6_utp"},
+        raw_text="cat6 utp 60",
+    )
+    from app.core.schemas import PacketFamily
+
+    decision = compare_atoms(roster, vendor, context={"packet_family": PacketFamily.vendor_mismatch})
+    assert decision.governing_atom_id == roster.id
+    assert decision.losing_atom_id == vendor.id
+
+
 def test_vendor_quote_governs_only_in_vendor_context_without_scope() -> None:
     vendor_qty = _atom(
         "a_vendor_qty",
