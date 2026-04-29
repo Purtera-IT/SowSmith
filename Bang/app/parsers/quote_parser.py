@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
@@ -25,18 +25,579 @@ from app.parsers.base import BaseParser
 from app.parsers.segmenters import segment_quote
 from app.domain.schemas import DomainPack
 
-HEADER_ALIASES = {
-    "part_number": {"part", "part number", "sku", "item number"},
-    "description": {"description", "item", "product", "device"},
-    "quantity": {"qty", "quantity", "count"},
-    "unit_price": {"unit price", "price", "cost"},
-    "lead_time": {"lead time", "eta"},
+# Canonical column keys -> normalized header substring aliases (lowercase, punctuation-stripped variants added at match time).
+HEADER_ALIASES: dict[str, set[str]] = {
+    "description": {
+        "description",
+        "item",
+        "line item",
+        "product",
+        "material",
+        "service",
+        "scope item",
+        "work item",
+        "equipment",
+        "labor item",
+        "cable type",
+        "line",
+        "device",
+    },
+    "quantity": {
+        "qty",
+        "qty.",
+        "quantity",
+        "count",
+        "units",
+        "no",
+        "#",
+        "quoted qty",
+        "bid qty",
+        "order qty",
+        "est qty",
+    },
+    "uom": {
+        "uom",
+        "unit",
+        "measure",
+        "ea",
+        "each",
+        "lf",
+        "ft",
+        "feet",
+        "lot",
+    },
+    "unit_price": {
+        "unit price",
+        "unit cost",
+        "price",
+        "cost",
+        "rate",
+        "labor rate",
+    },
+    "extended_price": {
+        "ext price",
+        "extended price",
+        "line total",
+        "total price",
+        "amount",
+        "extended cost",
+    },
+    "part_number": {
+        "part",
+        "part number",
+        "sku",
+        "item number",
+        "mpn",
+        "model",
+        "manufacturer part number",
+        "catalog #",
+        "catalog#",
+    },
+    "manufacturer": {
+        "manufacturer",
+        "mfr",
+        "brand",
+        "make",
+    },
+    "material_spec": {
+        "quoted material / spec",
+        "quoted material spec",
+        "material spec",
+        "category",
+        "cable type",
+        "cat",
+        "plenum",
+        "shielded",
+        "utp",
+        "stp",
+        "material",
+        "spec",
+    },
+    "lead_time": {
+        "lead time",
+        "eta",
+        "availability",
+        "delivery",
+        "ship date",
+    },
+    "included": {
+        "included",
+        "included?",
+        "in scope?",
+        "base bid",
+        "alt",
+        "alternate",
+        "option",
+        "excluded",
+    },
+    "notes": {
+        "notes",
+        "comments",
+        "clarifications",
+        "assumptions",
+        "exclusions",
+    },
+    "section": {
+        "section",
+        "category",
+        "phase",
+        "area",
+        "location",
+        "system",
+    },
 }
+
+RowKind = Literal[
+    "real_line_item",
+    "subtotal",
+    "grand_total",
+    "tax",
+    "shipping",
+    "discount",
+    "allowance",
+    "alternate",
+    "option",
+    "excluded",
+    "included_no_qty",
+    "section_header",
+    "blank",
+    "malformed",
+]
+
+
+def _header_cell_keys(cell: Any) -> set[str]:
+    raw = str(cell or "").strip()
+    if not raw:
+        return set()
+    lowered = raw.lower()
+    keys: set[str] = {
+        normalize_text(raw).strip(".:"),
+        normalize_text(raw.replace("/", " ")).strip(".:"),
+        normalize_text(raw.replace("/", " ").replace("?", "")).strip(".:"),
+        re.sub(r"\s+", " ", lowered).strip(),
+    }
+    return {k for k in keys if k}
+
+
+def _merge_header_cells(top: Any, bottom: Any) -> str:
+    a = str(top or "").strip()
+    b = str(bottom or "").strip()
+    if a and b:
+        return f"{a} {b}".strip()
+    return a or b
+
+
+def _header_map_from_row(row: list[Any]) -> dict[str, int]:
+    current_map: dict[str, int] = {}
+    for col_idx, cell in enumerate(row):
+        cell_keys = _header_cell_keys(cell)
+        if not cell_keys:
+            continue
+        for canonical, aliases in HEADER_ALIASES.items():
+            if canonical in current_map:
+                continue
+            if cell_keys & aliases:
+                current_map[canonical] = col_idx
+    return current_map
+
+
+def _header_map_from_two_rows(row_top: list[Any], row_bot: list[Any]) -> dict[str, int]:
+    width = max(len(row_top), len(row_bot))
+    merged: list[str] = []
+    for col in range(width):
+        top = row_top[col] if col < len(row_top) else None
+        bot = row_bot[col] if col < len(row_bot) else None
+        merged.append(_merge_header_cells(top, bot))
+    return _header_map_from_row(merged)
+
+
+def _qualifies_quote_header(header_map: dict[str, int]) -> bool:
+    keys = set(header_map)
+    if not keys:
+        return False
+    if keys <= {"notes", "section"}:
+        return False
+    has_desc = "description" in keys
+    has_qty = "quantity" in keys
+    has_part = "part_number" in keys
+    has_inc = "included" in keys
+    has_price = ("unit_price" in keys) or ("extended_price" in keys)
+    has_mat = "material_spec" in keys
+    q1 = has_desc and has_qty
+    q2 = has_desc and has_inc
+    q3 = has_desc and has_price
+    q4 = has_part and has_qty
+    q5 = has_desc and has_mat and (has_price or has_inc or has_qty or has_part)
+    return bool(q1 or q2 or q3 or q4 or q5)
+
+
+def _detect_header_advanced(
+    rows: list[list[Any]], scan_limit: int = 40
+) -> tuple[int | None, dict[str, int], str, list[str]]:
+    """Return (header_row_index_0based, header_map, mode single|pair, diagnostics)."""
+    diagnostics: list[str] = []
+    best_idx: int | None = None
+    best_map: dict[str, int] = {}
+    best_score = -1
+    best_mode = "single"
+
+    limit = min(scan_limit, len(rows))
+    for idx in range(limit):
+        row = rows[idx]
+        single_map = _header_map_from_row(row)
+        if _qualifies_quote_header(single_map):
+            score = len(single_map)
+            if score > best_score:
+                best_score = score
+                best_idx = idx
+                best_map = single_map
+                best_mode = "single"
+        if idx + 1 < len(rows):
+            pair_map = _header_map_from_two_rows(row, rows[idx + 1])
+            if _qualifies_quote_header(pair_map):
+                score = len(pair_map) + 0.25  # tie-break: prefer single if equal
+                if score > best_score:
+                    best_score = score
+                    best_idx = idx
+                    best_map = pair_map
+                    best_mode = "pair"
+    if best_idx is not None:
+        diagnostics.append(f"header_row={best_idx + 1} mode={best_mode} keys={sorted(best_map.keys())}")
+    return best_idx, best_map, best_mode, diagnostics
+
+
+def _sheet_is_false_positive(
+    rows: list[list[Any]], header_idx: int | None, header_map: dict[str, int]
+) -> tuple[bool, str]:
+    """Reject cover / instructions / terms-only sheets."""
+    if header_idx is None or not header_map:
+        return True, "no_header"
+    sample = " ".join(
+        normalize_text(str(c or "")) for row in rows[: min(25, len(rows))] for c in row
+    )
+    if "terms and conditions" in sample and "quantity" not in header_map and len(header_map) <= 3:
+        return True, "terms_like"
+    if "instructions to bidders" in sample and not _qualifies_quote_header(header_map):
+        return True, "instructions"
+    # Sparse grid with no qty column and only prose in first column
+    if "quantity" not in header_map and "part_number" not in header_map:
+        nonempty = sum(1 for r in rows[header_idx + 1 : header_idx + 12] if any(str(c or "").strip() for c in r))
+        if nonempty <= 1 and len(header_map) <= 2:
+            return True, "sparse_no_table"
+    return False, ""
+
+
+def _classify_row(
+    desc: str,
+    part: str,
+    quantity_raw: str,
+    unit_price: str,
+    extended: str,
+    notes: str,
+) -> RowKind:
+    d = normalize_text(desc).strip()
+    p = normalize_text(part).strip()
+    label = d or p
+    if not label and not str(quantity_raw or "").strip() and not str(unit_price or "").strip():
+        return "blank"
+    if label:
+        if re.match(r"^(total|subtotal|grand total)\b", label):
+            return "grand_total" if label.startswith("grand") else "subtotal"
+        if re.match(r"^(tax|sales tax|vat)\b", label):
+            return "tax"
+        if re.match(r"^(shipping|freight|delivery fee)\b", label):
+            return "shipping"
+        if re.match(r"^(discount|credit)\b", label):
+            return "discount"
+        if "allowance" in label:
+            return "allowance"
+        if re.match(r"^(alternate|alt\d|option)\b", label):
+            return "alternate"
+        if label.endswith(":") and len(label) < 48 and not str(quantity_raw or "").strip():
+            return "section_header"
+    n = normalize_text(notes).lower()
+    if "not included" in n or "excluded from" in n or "out of scope" in n:
+        if not str(quantity_raw or "").strip():
+            return "excluded"
+    if str(quantity_raw or "").strip().lower() in {"included", "inc", "n/c", "nc"} and not re.search(r"\d", str(quantity_raw)):
+        return "included_no_qty"
+    if label and not re.search(r"\d", str(quantity_raw or "")) and not str(unit_price or "").strip():
+        if len(label) < 4:
+            return "malformed"
+    return "real_line_item"
+
+
+def _extract_quantity_from_description(description: str) -> str | None:
+    t = str(description or "")
+    patterns = [
+        r"\(\s*(\d[\d,]*)\s*\)",
+        r"qty\.?\s*[:=]?\s*(\d[\d,]*)",
+        r"quantity\s*[:=]?\s*(\d[\d,]*)",
+        r"(\d[\d,]*)\s*(ea|each|lot)\b",
+    ]
+    for pat in patterns:
+        m = re.search(pat, t, flags=re.I)
+        if m:
+            return m.group(1).replace(",", "")
+    return None
+
+
+def parse_quote_quantity(
+    description: str,
+    quantity_cell: str,
+    uom_cell: str,
+    notes: str,
+) -> dict[str, Any]:
+    raw = str(quantity_cell or "").strip()
+    if not raw:
+        emb = _extract_quantity_from_description(description)
+        if emb:
+            raw = emb
+    combined = normalize_text(f"{raw} {uom_cell or ''}").strip()
+    low = combined.lower()
+    result: dict[str, Any] = {
+        "quantity_raw": raw,
+        "uom": str(uom_cell or "").strip() or None,
+        "quantity": None,
+        "unit": "count",
+        "uncertain": True,
+        "quantity_status": "missing",
+        "quantity_min": None,
+        "quantity_max": None,
+    }
+    if not raw and not _extract_quantity_from_description(description):
+        if "included" in low or low in {"inc", "y", "yes"}:
+            result["quantity_status"] = "included_no_qty"
+            result["uncertain"] = False
+            return result
+        result["quantity_status"] = "missing"
+        return result
+
+    if low in {"n/a", "na", "tbd", "t.b.d.", "pending"}:
+        result["quantity_status"] = "tbd" if "tbd" in low or "pending" in low else "not_applicable"
+        result["uncertain"] = True
+        return result
+    if "allowance" in low or low == "lot" or "lot" in low:
+        result["quantity_status"] = "allowance" if "allowance" in low else "known"
+        m = re.match(r"^\s*(\d[\d,]*)\s+lot", low)
+        if m:
+            q = int(m.group(1).replace(",", ""))
+            result["quantity"] = q
+            result["uncertain"] = False
+            result["quantity_status"] = "known"
+            return result
+        raw_digits = str(quantity_cell or "").strip().replace(",", "")
+        m0 = re.match(r"^\s*(-?\d[\d,]*(?:\.\d+)?)", raw_digits)
+        if m0:
+            q = float(m0.group(1))
+            if q.is_integer():
+                q = int(q)
+            result["quantity"] = q
+            result["uncertain"] = False
+        return result
+    if "included" in low and not re.search(r"\d", raw):
+        result["quantity_status"] = "included_no_qty"
+        result["uncertain"] = False
+        return result
+
+    mrange = re.match(r"^\s*(\d[\d,]*)\s*[-–]\s*(\d[\d,]*)\s*$", raw.replace(",", ""))
+    if mrange:
+        lo = int(mrange.group(1))
+        hi = int(mrange.group(2))
+        result["quantity_min"] = lo
+        result["quantity_max"] = hi
+        result["quantity_status"] = "range"
+        result["uncertain"] = True
+        return result
+
+    mapprox = re.match(r"^\s*(?:~|approx\.?|approximately)\s*(\d[\d,]*)", low)
+    if mapprox:
+        q = int(mapprox.group(1).replace(",", ""))
+        result["quantity"] = q
+        result["quantity_status"] = "known"
+        result["uncertain"] = True
+        return result
+
+    mneg = re.match(r"^\s*\(\s*(\d[\d,]*(?:\.\d+)?)\s*\)\s*$", raw)
+    if mneg:
+        q = -float(mneg.group(1).replace(",", ""))
+        if q.is_integer():
+            q = int(q)
+        result["quantity"] = q
+        result["quantity_status"] = "known"
+        result["uncertain"] = False
+        return result
+
+    mq = re.match(r"^\s*(-?\d[\d,]*(?:\.\d+)?)\s*([a-z%]{1,8})?\s*$", low.replace(",", ""))
+    if mq:
+        q = float(mq.group(1))
+        if q.is_integer():
+            q = int(q)
+        result["quantity"] = q
+        result["unit"] = mq.group(2) or "count"
+        st = "zero" if result["quantity"] == 0 else "known"
+        result["quantity_status"] = st
+        result["uncertain"] = False
+        return result
+
+    legacy = parse_quantity(raw)
+    result.update(legacy)
+    if legacy.get("quantity") is not None:
+        result["quantity_status"] = "zero" if legacy.get("quantity") == 0 else "known"
+    else:
+        result["quantity_status"] = "malformed"
+    result["uncertain"] = bool(legacy.get("uncertain", True))
+    return result
+
+
+def parse_money_cell(text: str, *, side: Literal["unit", "extended"] = "unit") -> dict[str, Any]:
+    """Parse one money cell; populate only the fields for `side` (unit vs extended column)."""
+    raw = str(text or "").strip()
+    out: dict[str, Any] = {
+        "unit_price_raw": None,
+        "unit_price_amount": None,
+        "extended_price_raw": None,
+        "extended_price_amount": None,
+        "currency": None,
+        "price_status": "missing",
+    }
+    if side == "unit":
+        out["unit_price_raw"] = raw
+    else:
+        out["extended_price_raw"] = raw
+    if not raw:
+        out["price_status"] = "missing"
+        return out
+    low = raw.lower()
+    if low in {"included", "n/c", "nc", "no charge", "no-charge", "-"}:
+        out["price_status"] = "included" if low == "included" else "no_charge"
+        return out
+    cleaned = re.sub(r"[$€£]", "", raw)
+    cleaned = cleaned.replace(",", "").strip()
+    neg = False
+    if cleaned.startswith("(") and cleaned.endswith(")"):
+        neg = True
+        cleaned = cleaned[1:-1].strip()
+    try:
+        val = float(cleaned)
+        if neg:
+            val = -val
+        if side == "unit":
+            out["unit_price_amount"] = val
+        else:
+            out["extended_price_amount"] = val
+        out["price_status"] = "known"
+        if "$" in raw or "€" in raw or "£" in raw:
+            out["currency"] = "USD" if "$" in raw else None
+    except ValueError:
+        out["price_status"] = "malformed"
+    return out
+
+
+def normalize_inclusion(included_cell: str, notes: str) -> dict[str, Any]:
+    cell = normalize_text(included_cell).lower()
+    note = normalize_text(notes).lower()
+    text = f"{cell} {note}".strip()
+    out: dict[str, Any] = {"included": None, "inclusion_status": "unknown"}
+    if re.search(
+        r"\b(not included|excluded from|excluded|out of scope|by others|n\.i\.c\.|\bnic\b)\b",
+        note,
+    ):
+        out["included"] = False
+        out["inclusion_status"] = "excluded"
+        return out
+    if cell in {"no", "n", "false", "0"}:
+        out["included"] = False
+        out["inclusion_status"] = "excluded"
+    elif re.search(r"\b(yes|y|true|1|included|base bid)\b", cell):
+        out["included"] = True
+        out["inclusion_status"] = "included"
+    if out["inclusion_status"] != "excluded":
+        if re.search(r"\b(optional|alternate|alt\s*1|option)\b", text):
+            out["inclusion_status"] = "optional"
+        elif re.search(r"\ballowance\b", text):
+            out["inclusion_status"] = "allowance"
+        elif re.search(r"\btbd\b|to be confirmed", text):
+            out["inclusion_status"] = "tbd"
+    return out
+
+
+def _material_heuristics(description: str, material_spec: str, notes: str) -> dict[str, Any]:
+    blob = normalize_text(f"{description} {material_spec} {notes}").lower()
+    out: dict[str, Any] = {
+        "normalized_item": normalize_text(description).strip(),
+        "material_family": None,
+        "cable_category": None,
+        "shielding": None,
+        "jacket_rating": None,
+        "item_kind": "other",
+        "is_scope_pollution_candidate": False,
+    }
+    if "cat6a" in blob or "cat 6a" in blob:
+        out["cable_category"] = "cat6a"
+    elif "cat6" in blob or "cat 6" in blob:
+        out["cable_category"] = "cat6"
+    if "stp" in blob or "shielded" in blob:
+        out["shielding"] = "shielded"
+    elif "utp" in blob or "unshielded" in blob:
+        out["shielding"] = "unshielded"
+    if "plenum" in blob:
+        out["jacket_rating"] = "plenum"
+    if "rj45" in blob or "termination" in blob:
+        out["item_kind"] = "termination"
+    elif "patch cord" in blob:
+        out["item_kind"] = "patch_cord"
+    elif "patch panel" in blob:
+        out["item_kind"] = "patch_panel"
+    elif "faceplate" in blob or "jack" in blob:
+        out["item_kind"] = "faceplate"
+    elif "raceway" in blob or "conduit" in blob:
+        out["item_kind"] = "raceway" if "raceway" in blob else "conduit"
+    elif "certif" in blob or "test export" in blob or "fluke" in blob:
+        out["item_kind"] = "certification"
+    elif "labor" in blob or "programming" in blob:
+        out["item_kind"] = "labor"
+    elif "drop" in blob or "cable" in blob:
+        out["item_kind"] = "cable_drop"
+    if re.search(r"\b(power|amp|circuit|voltage|120v|208v)\b", blob) and "patch" not in blob:
+        out["is_scope_pollution_candidate"] = True
+        if out["item_kind"] == "other":
+            out["item_kind"] = "power"
+    return out
+
+
+def _scan_quote_metadata(rows: list[list[Any]], max_rows: int = 18) -> dict[str, Any]:
+    meta: dict[str, Any] = {}
+    blob_lines: list[str] = []
+    for row in rows[:max_rows]:
+        line = " ".join(str(c or "").strip() for c in row if str(c or "").strip())
+        if line:
+            blob_lines.append(normalize_text(line))
+    blob = " ".join(blob_lines).lower()
+    m = re.search(r"\bquote\s*#\s*([A-Z0-9-]+)\b", blob, re.I)
+    if m:
+        meta["quote_number"] = m.group(1)
+    m = re.search(r"\b(?:vendor|from)\s*:\s*([^|]+?)(?:\||$)", blob, re.I)
+    if m:
+        meta["vendor_name"] = m.group(1).strip()[:120]
+    m = re.search(r"\b(?:project|customer)\s*:\s*([^|]+?)(?:\||$)", blob, re.I)
+    if m:
+        meta["project_name"] = m.group(1).strip()[:120]
+    m = re.search(r"\bexpiration\s*[:#]?\s*([0-9]{1,2}[/-][0-9]{1,2}[/-][0-9]{2,4})\b", blob, re.I)
+    if m:
+        meta["expiration_date"] = m.group(1)
+    m = re.search(r"\bvalid (?:through|until)\s*[:#]?\s*([0-9]{1,2}[/-][0-9]{1,2}[/-][0-9]{2,4})\b", blob, re.I)
+    if m:
+        meta["quote_valid_through"] = m.group(1)
+    m = re.search(r"\brevision\s*[:#]?\s*([0-9]+|[A-Z]-?[0-9]+)\b", blob, re.I)
+    if m:
+        meta["revision"] = m.group(1).strip()
+    return meta
 
 
 class QuoteParser(BaseParser):
     parser_name = "quote"
-    parser_version = "quote_parser_v1"
+    parser_version = "quote_parser_v1_3"
     capability = ParserCapability(
         parser_name=parser_name,
         parser_version=parser_version,
@@ -61,7 +622,7 @@ class QuoteParser(BaseParser):
                 reasons=[],
                 artifact_type=ArtifactType.vendor_quote,
             )
-        if any(token in filename for token in ("quote", "po", "vendor")):
+        if any(token in filename for token in ("quote", "po", "vendor", "bom", "pricing")):
             confidence = 0.95
             reasons.append("filename_quote_hint")
         elif self.looks_like_quote_artifact(path):
@@ -104,7 +665,7 @@ class QuoteParser(BaseParser):
     @classmethod
     def looks_like_quote_artifact(cls, path: Path) -> bool:
         name = path.name.lower()
-        if any(token in name for token in ("quote", "vendor", "po", "purchase_order")):
+        if any(token in name for token in ("quote", "vendor", "po", "purchase_order", "bom", "pricing")):
             return True
 
         suffix = path.suffix.lower()
@@ -112,25 +673,27 @@ class QuoteParser(BaseParser):
             if suffix == ".xlsx":
                 workbook = load_workbook(path, read_only=True, data_only=True)
                 for sheet in workbook.worksheets:
-                    sample_rows = [list(row) for _, row in zip(range(5), sheet.iter_rows(values_only=True))]
-                    _, header_map = cls._detect_header(sample_rows)
-                    if cls._is_quote_header_map(header_map):
-                        return True
+                    rows = [list(row) for _, row in zip(range(45), sheet.iter_rows(values_only=True))]
+                    idx, hmap, _, _ = _detect_header_advanced(rows, scan_limit=40)
+                    if idx is not None and _qualifies_quote_header(hmap):
+                        bad, _ = _sheet_is_false_positive(rows, idx, hmap)
+                        if not bad:
+                            return True
             elif suffix in {".csv", ".txt"}:
                 content = path.read_text(encoding="utf-8", errors="ignore")
-                sample_rows = [re.split(r"[,\t|]", line) for line in content.splitlines()[:5] if line.strip()]
-                _, header_map = cls._detect_header(sample_rows)
-                if cls._is_quote_header_map(header_map):
-                    return True
+                sample_rows = [re.split(r"[,\t|]", line) for line in content.splitlines()[:45] if line.strip()]
+                idx, hmap, _, _ = _detect_header_advanced(sample_rows, scan_limit=40)
+                if idx is not None and _qualifies_quote_header(hmap):
+                    bad, _ = _sheet_is_false_positive(sample_rows, idx, hmap)
+                    if not bad:
+                        return True
         except Exception:
             return False
         return False
 
     @staticmethod
     def _is_quote_header_map(header_map: dict[str, int]) -> bool:
-        has_core = {"description", "quantity"}.issubset(set(header_map.keys()))
-        has_quote_specific = any(k in header_map for k in ("part_number", "unit_price", "lead_time"))
-        return has_core and has_quote_specific
+        return _qualifies_quote_header(header_map)
 
     def _parse_xlsx(self, project_id: str, artifact_id: str, path: Path) -> list[EvidenceAtom]:
         workbook = load_workbook(path, read_only=True, data_only=True)
@@ -138,7 +701,7 @@ class QuoteParser(BaseParser):
         for sheet in workbook.worksheets:
             rows = [list(row) for row in sheet.iter_rows(values_only=True)]
             atoms.extend(
-                self._parse_rows(
+                self._parse_sheet(
                     project_id=project_id,
                     artifact_id=artifact_id,
                     filename=path.name,
@@ -150,10 +713,17 @@ class QuoteParser(BaseParser):
         return atoms
 
     def _parse_csv(self, project_id: str, artifact_id: str, path: Path) -> list[EvidenceAtom]:
+        text_head = path.read_text(encoding="utf-8", errors="ignore")[:8192]
+        first_line = text_head.splitlines()[0] if text_head else ""
+        delimiter = ","
+        if first_line.count("|") > first_line.count(",") and "|" in first_line:
+            delimiter = "|"
+        elif "\t" in first_line and first_line.count("\t") > first_line.count(","):
+            delimiter = "\t"
         with path.open("r", encoding="utf-8", errors="ignore", newline="") as handle:
-            reader = csv.reader(handle)
+            reader = csv.reader(handle, delimiter=delimiter)
             rows = [list(row) for row in reader]
-        return self._parse_rows(
+        return self._parse_sheet(
             project_id=project_id,
             artifact_id=artifact_id,
             filename=path.name,
@@ -166,7 +736,7 @@ class QuoteParser(BaseParser):
         content = path.read_text(encoding="utf-8", errors="ignore")
         lines = [line for line in content.splitlines() if line.strip()]
         rows = [re.split(r"[,\t|]", line) for line in lines]
-        return self._parse_rows(
+        return self._parse_sheet(
             project_id=project_id,
             artifact_id=artifact_id,
             filename=path.name,
@@ -175,33 +745,7 @@ class QuoteParser(BaseParser):
             rows=rows,
         )
 
-    @classmethod
-    def _detect_header(cls, rows: list[list[Any]]) -> tuple[int | None, dict[str, int]]:
-        scan_limit = min(25, len(rows))
-        best_idx: int | None = None
-        best_map: dict[str, int] = {}
-        best_score = -1
-
-        for idx in range(scan_limit):
-            row = rows[idx]
-            current_map: dict[str, int] = {}
-            for col_idx, cell in enumerate(row):
-                cell_text = normalize_text(str(cell or ""))
-                if not cell_text:
-                    continue
-                for canonical, aliases in HEADER_ALIASES.items():
-                    if cell_text in aliases and canonical not in current_map:
-                        current_map[canonical] = col_idx
-            score = len(current_map)
-            if score > best_score:
-                best_score = score
-                best_idx = idx
-                best_map = current_map
-        if best_score <= 0:
-            return None, {}
-        return best_idx, best_map
-
-    def _parse_rows(
+    def _parse_sheet(
         self,
         project_id: str,
         artifact_id: str,
@@ -212,15 +756,46 @@ class QuoteParser(BaseParser):
     ) -> list[EvidenceAtom]:
         if not rows:
             return []
-        header_idx, header_map = self._detect_header(rows)
-        if header_idx is None:
+        header_idx, header_map, header_mode, diag = _detect_header_advanced(rows, scan_limit=40)
+        if header_idx is None or not header_map:
+            return []
+        bad, reason = _sheet_is_false_positive(rows, header_idx, header_map)
+        if bad:
             return []
 
+        data_start = header_idx + (2 if header_mode == "pair" else 1)
+        meta = _scan_quote_metadata(rows[:data_start])
         atoms: list[EvidenceAtom] = []
-        for row_idx in range(header_idx + 1, len(rows)):
+        if meta:
+            atoms.append(
+                self._constraint_atom(
+                    project_id,
+                    artifact_id,
+                    filename,
+                    sheet_name,
+                    artifact_type,
+                    header_idx + 1,
+                    header_map,
+                    {"quote_parser_metadata": meta, "diagnostics": diag + ["quote_metadata_scanned"]},
+                    spreadsheet_cell_locator=False,
+                )
+            )
+
+        for row_idx in range(data_start, len(rows)):
             row = rows[row_idx]
             values = self._extract_row_values(row, header_map)
             if all(not str(v).strip() for v in values.values()):
+                continue
+            desc = values.get("description", "")
+            part = values.get("part_number", "")
+            qty_raw = values.get("quantity", "")
+            notes = values.get("notes", "")
+            up = values.get("unit_price", "")
+            extp = values.get("extended_price", "")
+            rk = _classify_row(desc, part, qty_raw, up, extp, notes)
+            if rk in {"blank", "subtotal", "grand_total", "tax", "shipping", "discount", "section_header"}:
+                continue
+            if rk in {"malformed"} and not (desc or part):
                 continue
             atoms.extend(
                 self._row_to_atoms(
@@ -232,6 +807,8 @@ class QuoteParser(BaseParser):
                     row_number=row_idx + 1,
                     header_map=header_map,
                     values=values,
+                    row_kind=rk,
+                    diagnostics=diag,
                 )
             )
         return atoms
@@ -243,6 +820,50 @@ class QuoteParser(BaseParser):
             extracted[key] = str(value).strip() if value is not None else ""
         return extracted
 
+    def _constraint_atom(
+        self,
+        project_id: str,
+        artifact_id: str,
+        filename: str,
+        sheet_name: str,
+        artifact_type: ArtifactType,
+        row_number: int,
+        header_map: dict[str, int],
+        value: dict[str, Any],
+        *,
+        spreadsheet_cell_locator: bool = True,
+    ) -> EvidenceAtom:
+        if spreadsheet_cell_locator:
+            columns = {key: get_column_letter(index + 1) for key, index in header_map.items()}
+            locator: dict[str, Any] = {"sheet": sheet_name, "row": row_number, "columns": columns}
+        else:
+            locator = {"sheet": sheet_name, "row": row_number}
+        source_ref = SourceRef(
+            id=stable_id("src", artifact_id, sheet_name, row_number, "meta"),
+            artifact_id=artifact_id,
+            artifact_type=artifact_type,
+            filename=filename,
+            locator=locator,
+            extraction_method="quote_parser_metadata",
+            parser_version=self.parser_version,
+        )
+        return EvidenceAtom(
+            id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, "quote_meta"),
+            project_id=project_id,
+            artifact_id=artifact_id,
+            atom_type=AtomType.constraint,
+            raw_text="Quote parser metadata",
+            normalized_text="quote parser metadata",
+            value=value,
+            entity_keys=[],
+            source_refs=[source_ref],
+            authority_class=AuthorityClass.vendor_quote,
+            confidence=0.75,
+            review_status=ReviewStatus.auto_accepted,
+            review_flags=["quote_parser:metadata"],
+            parser_version=self.parser_version,
+        )
+
     def _row_to_atoms(
         self,
         project_id: str,
@@ -253,12 +874,29 @@ class QuoteParser(BaseParser):
         row_number: int,
         header_map: dict[str, int],
         values: dict[str, str],
+        row_kind: RowKind,
+        diagnostics: list[str],
     ) -> list[EvidenceAtom]:
         part_number = values.get("part_number", "")
         description = values.get("description", "")
         quantity_raw = values.get("quantity", "")
-        unit_price = values.get("unit_price", "")
+        unit_price_raw = values.get("unit_price", "")
+        extended_raw = values.get("extended_price", "")
         lead_time = values.get("lead_time", "")
+        material_spec = values.get("material_spec", "")
+        included_raw = values.get("included", "")
+        notes = values.get("notes", "")
+        uom_cell = values.get("uom", "")
+        section = values.get("section", "")
+
+        inc_obj = normalize_inclusion(included_raw, notes)
+        qty_obj = parse_quote_quantity(description, quantity_raw, uom_cell, notes)
+        up_money = parse_money_cell(unit_price_raw, side="unit")
+        ext_money = parse_money_cell(extended_raw, side="extended")
+        mat = _material_heuristics(description, material_spec, notes)
+
+        included_bool = inc_obj.get("included")
+        inclusion_status = inc_obj.get("inclusion_status") or "unknown"
 
         entity_keys: list[str] = []
         if description:
@@ -266,20 +904,22 @@ class QuoteParser(BaseParser):
         if part_number:
             entity_keys.append(normalize_entity_key("part", part_number))
 
-        columns = {key: get_column_letter(index + 1) for key, index in header_map.items()}
+        used_keys = {k for k, v in values.items() if str(v or "").strip()}
+        columns = {k: get_column_letter(header_map[k] + 1) for k in used_keys if k in header_map}
+
         source_ref = SourceRef(
             id=stable_id("src", artifact_id, sheet_name, row_number),
             artifact_id=artifact_id,
             artifact_type=artifact_type,
             filename=filename,
             locator={"sheet": sheet_name, "row": row_number, "columns": columns},
-            extraction_method="quote_header_mapping",
+            extraction_method="quote_header_mapping_v1_3",
             parser_version=self.parser_version,
         )
 
         atoms: list[EvidenceAtom] = []
 
-        def append_atom(atom_type: AtomType, raw_text: str, value: dict[str, Any], confidence: float) -> None:
+        def append_atom(atom_type: AtomType, raw_text: str, value: dict[str, Any], confidence: float, flags: list[str]) -> None:
             atoms.append(
                 EvidenceAtom(
                     id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, atom_type.value, raw_text),
@@ -294,36 +934,87 @@ class QuoteParser(BaseParser):
                     authority_class=AuthorityClass.vendor_quote,
                     confidence=confidence,
                     review_status=ReviewStatus.auto_accepted,
-                    review_flags=[],
+                    review_flags=flags,
                     parser_version=self.parser_version,
                 )
             )
 
-        if part_number or description or quantity_raw or unit_price:
+        vli_value: dict[str, Any] = {
+            "part_number": part_number,
+            "description": description,
+            "quantity": quantity_raw,
+            "quantity_parsed": qty_obj,
+            "unit_price_raw": unit_price_raw,
+            "unit_price_parsed": up_money,
+            "extended_price_raw": extended_raw,
+            "extended_price_parsed": ext_money,
+            "lead_time": lead_time,
+            "material_spec": material_spec,
+            "section": section,
+            "notes": notes,
+            "included": included_bool,
+            "inclusion_status": inclusion_status,
+            "row_kind": row_kind,
+            "normalized_item": mat["normalized_item"],
+            "material_family": mat.get("material_family"),
+            "cable_category": mat.get("cable_category"),
+            "shielding": mat.get("shielding"),
+            "jacket_rating": mat.get("jacket_rating"),
+            "item_kind": mat.get("item_kind"),
+            "is_scope_pollution_candidate": mat.get("is_scope_pollution_candidate"),
+            "parser_diagnostics": diagnostics[:12],
+        }
+
+        has_line = bool(
+            part_number
+            or description
+            or (quantity_raw != "" and quantity_raw is not None)
+            or unit_price_raw
+            or extended_raw
+            or material_spec
+            or str(included_raw or "").strip()
+            or notes
+        )
+        flags: list[str] = []
+        if qty_obj.get("uncertain"):
+            flags.append("quote_parser:ambiguous_quantity")
+        if up_money.get("price_status") == "malformed" and unit_price_raw.strip():
+            flags.append("quote_parser:malformed_money")
+
+        if has_line and row_kind in {"real_line_item", "allowance", "alternate", "option", "excluded", "included_no_qty", "malformed"}:
             append_atom(
                 AtomType.vendor_line_item,
                 f"Line item {part_number} {description}".strip(),
-                {
-                    "part_number": part_number,
-                    "description": description,
-                    "quantity": quantity_raw,
-                    "unit_price": unit_price,
-                    "lead_time": lead_time,
-                },
-                confidence=0.9,
+                vli_value,
+                0.88 if not flags else 0.72,
+                flags,
             )
-        if quantity_raw:
+
+        q_emit = qty_obj.get("quantity") is not None or qty_obj.get("quantity_status") in {
+            "zero",
+            "included_no_qty",
+            "tbd",
+            "not_applicable",
+            "range",
+            "allowance",
+        }
+        if q_emit or (quantity_raw != "" and quantity_raw is not None):
+            qval = dict(qty_obj)
+            qval["legacy"] = parse_quantity(quantity_raw) if quantity_raw else parse_quantity(str(qty_obj.get("quantity") or ""))
             append_atom(
                 AtomType.quantity,
-                f"Quantity {quantity_raw}",
-                parse_quantity(quantity_raw),
-                confidence=0.9,
+                f"Quantity {qty_obj.get('quantity_raw') or quantity_raw}",
+                qval,
+                0.88 if not qty_obj.get("uncertain") else 0.7,
+                list(flags),
             )
+
         if lead_time:
             append_atom(
                 AtomType.constraint,
                 f"Lead time {lead_time}",
                 {"lead_time": lead_time},
-                confidence=0.85,
+                0.85,
+                [],
             )
         return atoms
