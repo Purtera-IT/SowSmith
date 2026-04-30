@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.core.ids import stable_id
+from app.core.risk import compute_pm_queue_tier, pm_material_mismatch_order
 from app.review.schemas import ReviewQueueItem
 
 
@@ -41,9 +42,7 @@ def _novelty_score_for_packet(packet: dict[str, Any], manifest: dict[str, Any] |
     reasons: list[str] = []
     anchor_key = str(packet.get("anchor_key", "")).lower()
     score = 0.0
-    if "unknown" in anchor_key:
-        score += 0.35
-        reasons.append("novel_anchor_unknown")
+    # Do not boost unknown anchors — they are often false positives (device:unknown should not jump the queue).
     if anchor_key.startswith("device:") and any(token in anchor_key for token in ("custom", "new", "other")):
         score += 0.25
         reasons.append("unseen_device_alias")
@@ -121,6 +120,46 @@ def _packet_queue_item(
 
     family = str(packet.get("family", "packet"))
     anchor_key = packet.get("anchor_key")
+    anchor_s = str(anchor_key or "").lower()
+    queue_tier = compute_pm_queue_tier(
+        family=family,
+        anchor_key=str(anchor_key) if anchor_key else "",
+        review_flags=list(packet.get("review_flags") or []),
+        status=str(packet.get("status") or ""),
+    )
+    anchor_sort_key = pm_material_mismatch_order(str(anchor_key) if anchor_key else None)
+
+    if "device:unknown" in anchor_s or anchor_s in ("site:unknown", "entity:unknown"):
+        score -= 0.35
+        reasons.append("penalize_unknown_anchor")
+
+    if family in {"quantity_conflict", "vendor_mismatch"}:
+        score += 0.22
+        reasons.append("commercial_procurement_queue_boost")
+    if family == "scope_exclusion" and set(packet.get("review_flags") or []) & {
+        "power_vendor_scope_mismatch",
+        "scope_pollution_vendor_vs_written_exclusion",
+        "vendor_scope_pollution_candidate",
+    }:
+        score += 0.18
+        reasons.append("power_scope_pollution_queue_boost")
+    if family == "missing_info" and set(packet.get("review_flags") or []) & {
+        "raceway_conduit_pathway_missing_info",
+        "certification_testing_export_missing_info",
+        "missing_info_access_gate",
+        "site_access_gate_unknown",
+    }:
+        score += 0.12
+        reasons.append("blocking_missing_info_queue_boost")
+    if family == "site_access":
+        score += 0.08
+        reasons.append("site_access_queue_boost")
+    if family == "action_item":
+        score -= 0.12
+        reasons.append("action_item_default_demotion")
+
+    score = round(min(1.0, max(0.0, score)), 6)
+
     suggested_question = _question_for_packet(family, anchor_key)
     return ReviewQueueItem(
         item_id=stable_id("rq", "packet", packet.get("id"), score, family),
@@ -135,6 +174,8 @@ def _packet_queue_item(
         ambiguity_score=ambiguity_score if certificate else None,
         novelty_score=novelty_score,
         created_at=created_at,
+        queue_tier=queue_tier,
+        anchor_sort_key=anchor_sort_key,
     )
 
 
@@ -172,6 +213,8 @@ def _candidate_queue_item(candidate: dict[str, Any], *, created_at: str) -> Revi
         ambiguity_score=round(1.0 - confidence, 6),
         novelty_score=novelty_score,
         created_at=created_at,
+        queue_tier=70,
+        anchor_sort_key=50,
     )
 
 
@@ -197,6 +240,8 @@ def _semantic_queue_item(link: dict[str, Any], *, created_at: str) -> ReviewQueu
         ambiguity_score=round(1.0 - float(link.get("similarity_score") or 0.0), 6),
         novelty_score=None,
         created_at=created_at,
+        queue_tier=75,
+        anchor_sort_key=50,
     )
 
 
@@ -249,7 +294,16 @@ def build_active_learning_queue(
     for link in semantic_links:
         queue.append(_semantic_queue_item(link, created_at=created_at))
 
-    queue.sort(key=lambda item: (-item.priority_score, item.item_type, item.target_id, item.item_id))
+    queue.sort(
+        key=lambda item: (
+            item.queue_tier,
+            item.anchor_sort_key,
+            -item.priority_score,
+            item.item_type,
+            item.target_id,
+            item.item_id,
+        )
+    )
     if max_items is not None:
         queue = queue[: max(0, max_items)]
     return queue

@@ -402,6 +402,7 @@ python scripts/run_packetizer_benchmark.py --fixtures tests/fixtures/gold_scenar
 
 ```bash
 pytest tests/parser_adversarial
+pytest tests/test_copper_low_voltage_adversarial.py
 python scripts/run_parser_benchmark.py --out /tmp/parser_benchmark.json
 ```
 

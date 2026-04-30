@@ -161,18 +161,23 @@ def validate_compile_result(result: CompileResult, source_files_available: bool 
                         f"ERROR: Packet {packet.id} {packet.family.value} certificate must mention both quantity values"
                     )
         if packet.family == PacketFamily.scope_exclusion and certificate is not None:
-            rationale = certificate.governing_rationale.lower()
-            if "exclusion" not in rationale and "needs_review" not in rationale:
-                messages.append(
-                    f"ERROR: Packet {packet.id} scope_exclusion certificate must explain governing exclusion or needs_review"
-                )
+            if not packet.governing_atom_ids and "vendor_scope_pollution_candidate" in (packet.review_flags or []):
+                pass
+            else:
+                rationale = certificate.governing_rationale.lower()
+                if "exclusion" not in rationale and "needs_review" not in rationale:
+                    messages.append(
+                        f"ERROR: Packet {packet.id} scope_exclusion certificate must explain governing exclusion or needs_review"
+                    )
 
         if packet.anchor_signature is None:
             messages.append(f"ERROR: Packet {packet.id} missing anchor_signature")
         else:
             packet_atoms = [
                 atom_by_id[atom_id]
-                for atom_id in (packet.supporting_atom_ids + packet.contradicting_atom_ids)
+                for atom_id in sorted(
+                    set(packet.governing_atom_ids + packet.supporting_atom_ids + packet.contradicting_atom_ids)
+                )
                 if atom_id in atom_by_id
             ]
             owner = None
@@ -183,6 +188,17 @@ def validate_compile_result(result: CompileResult, source_files_available: bool 
             material_identity = None
             if packet.anchor_signature and packet.anchor_signature.canonical_key.startswith("material:"):
                 material_identity = packet.anchor_signature.canonical_key.split(":", 1)[1]
+            elif packet.family == PacketFamily.scope_exclusion and packet.anchor_signature:
+                ck = packet.anchor_signature.canonical_key
+                if "|" in ck:
+                    material_identity = ck.split("|", 1)[1]
+            elif packet.family == PacketFamily.missing_info and packet.anchor_signature:
+                if packet.anchor_signature.canonical_key == "missing_info:raceway_conduit":
+                    material_identity = "raceway_conduit"
+                elif packet.anchor_signature.canonical_key == "missing_info:requirement:certification":
+                    material_identity = "certification"
+                elif packet.anchor_signature.canonical_key == "missing_info:access:site_gate":
+                    material_identity = "site_access_gate"
             expected_signature = make_anchor_signature(
                 packet.family, packet_atoms, owner=owner, material_identity=material_identity
             )

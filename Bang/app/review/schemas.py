@@ -18,6 +18,8 @@ class ReviewQueueItem(BaseModel):
     ambiguity_score: float | None = None
     novelty_score: float | None = None
     created_at: str
+    queue_tier: int = Field(default=50, ge=0, le=99)
+    anchor_sort_key: int = Field(default=50, ge=0, le=99)
 
 
 class ReviewQueueFile(BaseModel):

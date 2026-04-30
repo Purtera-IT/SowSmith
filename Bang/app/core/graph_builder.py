@@ -3,10 +3,11 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from app.domain import get_active_domain_pack
 from app.core.ids import stable_id
+from app.core.item_identity import canonical_material_key, is_primary_vendor_quantity
 from app.core.normalizers import normalize_text
 from app.core.schemas import AtomType, AuthorityClass, EdgeType, EntityRecord, EvidenceAtom, EvidenceEdge
+from app.domain import get_active_domain_pack
 from app.semantic.linker import propose_semantic_link_candidates
 
 
@@ -36,7 +37,12 @@ def _quantity_material_identity(atom: EvidenceAtom) -> str | None:
 
 
 def _canonical_material_key(atom: EvidenceAtom) -> str | None:
-    """Map roster and vendor quantity identities onto one key (slug + cable/RJ45 heuristics)."""
+    """Map roster and vendor quantity identities onto one comparison key."""
+    if atom.atom_type != AtomType.quantity:
+        return None
+    key = canonical_material_key(atom)
+    if key:
+        return key
     base = _quantity_material_identity(atom)
     if not base:
         return None
@@ -66,25 +72,11 @@ _VENDOR_PRIMARY_FILTER_LABEL = (
 
 
 def _vendor_quote_line_counts_for_primary_total(atom: EvidenceAtom) -> bool:
-    """Vendor lines included in primary quote totals (excludes optional/alternate/allowance/excluded/TBD-only rows)."""
+    """Vendor lines included in primary quote totals (delegates to item_identity)."""
     if atom.authority_class != AuthorityClass.vendor_quote or atom.atom_type != AtomType.quantity:
         return False
     v = atom.value if isinstance(atom.value, dict) else {}
-    inc = str(v.get("inclusion_status") or "").lower()
-    if inc in {"excluded", "optional", "allowance", "tbd"}:
-        return False
-    if v.get("included") is False:
-        return False
-    qs = str(v.get("quantity_status") or "").lower()
-    if qs in {"allowance", "tbd", "not_applicable", "included_no_qty"}:
-        return False
-    if _quantity_value(atom) is None:
-        return False
-    blob = normalize_text(f"{atom.raw_text} {v.get('notes', '')} {v.get('item', '')}").lower()
-    if re.search(r"\b(not included|by others|\bnics?\b|optional|alternate|allowance only)\b", blob):
-        if inc not in {"included"} and v.get("included") is not True:
-            return False
-    return True
+    return is_primary_vendor_quantity(v, raw_text=atom.raw_text)
 
 
 def _identity_display(identity: str) -> str:
@@ -146,6 +138,51 @@ def _device_keys(atom: EvidenceAtom) -> set[str]:
 
 def _floor_room_keys(atom: EvidenceAtom) -> set[str]:
     return {k for k in atom.entity_keys if k.startswith("floor:") or k.startswith("room:") or k.startswith("device:")}
+
+
+def _plate_keys(atom: EvidenceAtom) -> set[str]:
+    return {k for k in atom.entity_keys if k.startswith("plate:")}
+
+
+def _drop_or_outlet_keys(atom: EvidenceAtom) -> set[str]:
+    return {k for k in atom.entity_keys if k.startswith("drop:") or k.startswith("outlet:")}
+
+
+def _real_device_keys(atom: EvidenceAtom) -> set[str]:
+    return {k for k in atom.entity_keys if k.startswith("device:") and k != "device:unknown"}
+
+
+def _room_floor_location_device_fingerprint(atom: EvidenceAtom) -> frozenset[str]:
+    """Room + floor + location + non-unknown device keys (excludes site: and plate:)."""
+    parts: set[str] = set()
+    for k in atom.entity_keys:
+        if k.startswith(("room:", "floor:", "location:")):
+            parts.add(k)
+        if k.startswith("device:") and k != "device:unknown":
+            parts.add(k)
+    return frozenset(parts)
+
+
+def _quantity_pair_comparable_scope(a: EvidenceAtom, b: EvidenceAtom) -> bool:
+    """True when two quantity atoms refer to the same comparable scope (not merely same site)."""
+    pl_a, pl_b = _plate_keys(a), _plate_keys(b)
+    if pl_a and pl_b:
+        return bool(pl_a & pl_b)
+    if pl_a or pl_b:
+        do_a, do_b = _drop_or_outlet_keys(a), _drop_or_outlet_keys(b)
+        if do_a and do_b and (do_a & do_b):
+            return True
+        da, db = _real_device_keys(a), _real_device_keys(b)
+        return bool(da & db)
+    do_a, do_b = _drop_or_outlet_keys(a), _drop_or_outlet_keys(b)
+    if do_a and do_b and (do_a & do_b):
+        return True
+    da, db = _real_device_keys(a), _real_device_keys(b)
+    if da & db:
+        return True
+    fp_a = _room_floor_location_device_fingerprint(a)
+    fp_b = _room_floor_location_device_fingerprint(b)
+    return bool(fp_a) and fp_a == fp_b
 
 
 def _edge_id(project_id: str, edge_type: EdgeType, from_id: str, to_id: str, reason: str) -> str:
@@ -235,24 +272,33 @@ def build_edges(project_id: str, atoms: list[EvidenceAtom], entities: list[Entit
                     )
                 )
 
-            # contradicts: same entity key/device + quantity differs (except different site keys).
+            # contradicts: same comparable scope + quantity differs (not mere co-site line items).
             if a.atom_type.value == "quantity" and b.atom_type.value == "quantity":
-                if quantity_a is not None and quantity_b is not None and quantity_a != quantity_b:
-                    sites_a = _site_keys(a)
-                    sites_b = _site_keys(b)
-                    if sites_a and sites_b and sites_a != sites_b:
+                if quantity_a is None or quantity_b is None or quantity_a == quantity_b:
+                    continue
+                sites_a = _site_keys(a)
+                sites_b = _site_keys(b)
+                if sites_a and sites_b and sites_a != sites_b:
+                    continue
+                if (
+                    a.authority_class == AuthorityClass.approved_site_roster
+                    and b.authority_class == AuthorityClass.approved_site_roster
+                ):
+                    ida, idb = _canonical_material_key(a), _canonical_material_key(b)
+                    if ida is None or idb is None or ida != idb:
                         continue
-                    if _device_keys(a).intersection(_device_keys(b)) or shared:
-                        push(
-                            _build_edge(
-                                project_id,
-                                EdgeType.contradicts,
-                                a,
-                                b,
-                                f"Quantity mismatch {quantity_a:g} vs {quantity_b:g} for shared entity context",
-                                0.9,
-                            )
-                        )
+                if not _quantity_pair_comparable_scope(a, b):
+                    continue
+                push(
+                    _build_edge(
+                        project_id,
+                        EdgeType.contradicts,
+                        a,
+                        b,
+                        f"Quantity mismatch {quantity_a:g} vs {quantity_b:g} for shared entity context",
+                        0.9,
+                    )
+                )
 
     # excludes: exclusion atom mentions entity key in another atom.
     exclusions = [a for a in ordered if a.atom_type.value == "exclusion"]
@@ -328,6 +374,8 @@ def build_edges(project_id: str, atoms: list[EvidenceAtom], entities: list[Entit
 
     device_keys = sorted({k[0] for k in by_device_and_authority})
     for device_key in device_keys:
+        if device_key == "device:unknown":
+            continue
         approved = by_device_and_authority.get((device_key, AuthorityClass.approved_site_roster))
         vendor = by_device_and_authority.get((device_key, AuthorityClass.vendor_quote))
         if not approved or not vendor:

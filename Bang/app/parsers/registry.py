@@ -69,9 +69,12 @@ def _deterministic_tie_break(
         if meeting_markers:
             return by_name["transcript"]
     if {"quote", "xlsx"}.issubset(by_name):
-        if any(token in name for token in ("quote", "po", "vendor")):
-            return by_name["quote"]
-        return by_name["xlsx"]
+        from app.parsers.spreadsheet_route_signals import resolve_quote_vs_xlsx_tie
+
+        choice, tie_reasons = resolve_quote_vs_xlsx_tie(path)
+        parser, match = by_name[choice]
+        merged = list(match.reasons) + [f"router:{r}" for r in tie_reasons]
+        return parser, match.model_copy(update={"reasons": merged})
     ranked = sorted(candidates, key=lambda row: row[0].capability.parser_name)
     return ranked[0]
 

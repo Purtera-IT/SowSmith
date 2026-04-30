@@ -2,12 +2,32 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from openpyxl import Workbook
+
 from app.core.compiler import compile_project
 from app.parsers.registry import choose_parser
+from app.parsers.spreadsheet_route_signals import resolve_quote_vs_xlsx_tie
+
+
+def _save_xlsx(path: Path, headers: list[str], data_row: list[str] | None = None) -> None:
+    wb = Workbook()
+    ws = wb.active
+    ws.append(headers)
+    if data_row is not None:
+        ws.append(data_row)
+    wb.save(path)
 
 
 def test_site_list_routes_to_xlsx_parser(demo_project: Path) -> None:
     parser, match, _ = choose_parser(demo_project / "site_list.xlsx", domain_pack=None)
+    assert parser is not None
+    assert match.parser_name == "xlsx"
+
+
+def test_site_list_device_qty_routes_to_xlsx(tmp_path: Path) -> None:
+    path = tmp_path / "site_list.xlsx"
+    _save_xlsx(path, ["Site", "Device", "Qty"], ["Main", "Switch-A", "12"])
+    parser, match, _ = choose_parser(path, domain_pack=None)
     assert parser is not None
     assert match.parser_name == "xlsx"
 
@@ -17,6 +37,43 @@ def test_vendor_quote_routes_to_quote_parser(demo_project: Path) -> None:
     assert parser is not None
     assert match.parser_name == "quote"
     assert match.confidence >= 0.8
+
+
+def test_vendor_quote_line_item_qty_included_routes_to_quote(tmp_path: Path) -> None:
+    path = tmp_path / "vendor_quote.xlsx"
+    _save_xlsx(path, ["Line Item", "Qty", "Included"], ["Cable run", "10", "Yes"])
+    parser, match, _ = choose_parser(path, domain_pack=None)
+    assert parser is not None
+    assert match.parser_name == "quote"
+
+
+def test_drop_schedule_wide_material_routes_to_xlsx(tmp_path: Path) -> None:
+    path = tmp_path / "drop_schedule.xlsx"
+    _save_xlsx(
+        path,
+        ["Plate ID", "Room", "RJ45", "Cat6 UTP", "Cat6 STP"],
+        ["P-01", "101", "2", "1", "0"],
+    )
+    parser, match, _ = choose_parser(path, domain_pack=None)
+    assert parser is not None
+    assert match.parser_name == "xlsx"
+
+
+def test_bom_part_description_qty_routes_to_quote(tmp_path: Path) -> None:
+    path = tmp_path / "material_bom.xlsx"
+    _save_xlsx(path, ["Part Number", "Description", "Qty"], ["PN-1", "Widget", "5"])
+    parser, match, _ = choose_parser(path, domain_pack=None)
+    assert parser is not None
+    assert match.parser_name == "quote"
+
+
+def test_ambiguous_path_logs_tie_decision_reasons(tmp_path: Path) -> None:
+    path = tmp_path / "scope_matrix_vendor_estimate.xlsx"
+    _save_xlsx(path, ["Site", "Device", "Qty"], ["A", "X", "1"])
+    choice, reasons = resolve_quote_vs_xlsx_tie(path)
+    joined = " ".join(reasons).lower()
+    assert "tie" in joined
+    assert choice in ("quote", "xlsx")
 
 
 def test_customer_email_routes_email(tmp_path: Path) -> None:

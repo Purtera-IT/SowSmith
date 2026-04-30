@@ -74,11 +74,14 @@ def make_anchor_signature(
         scope_dimension = "quantity"
         entity_keys = [canonical_key]
     elif family == PacketFamily.scope_exclusion:
-        canonical_key = _best_site_key(atoms, prioritize_exclusion_text=True)
+        site_key = _best_site_key(atoms, prioritize_exclusion_text=True)
+        canonical_key = site_key
+        if material_identity:
+            canonical_key = f"{site_key}|{material_identity}"
         anchor_type = "site"
-        normalized_topic = canonical_key.split(":", 1)[1]
+        normalized_topic = site_key.split(":", 1)[1] if ":" in site_key else site_key
         scope_dimension = "exclusion"
-        entity_keys = [canonical_key]
+        entity_keys = sorted({site_key, material_identity} if material_identity else {site_key})
     elif family == PacketFamily.site_access:
         canonical_key = _best_site_key(atoms)
         anchor_type = "site"
@@ -96,13 +99,32 @@ def make_anchor_signature(
         scope_dimension = "action"
         entity_keys = [f"action_item:{owner_key}"]
     elif family == PacketFamily.missing_info:
-        q_atom = _first_atom_by_type(atoms, {AtomType.open_question})
-        topic = q_atom.raw_text if q_atom else "unknown_question"
-        canonical_key = f"missing_info:{_topic_slug(topic)}"
-        anchor_type = "missing_info"
-        normalized_topic = _topic_slug(topic)
-        scope_dimension = "question"
-        entity_keys = [canonical_key]
+        if material_identity == "raceway_conduit":
+            canonical_key = "missing_info:raceway_conduit"
+            anchor_type = "missing_info"
+            normalized_topic = "raceway_conduit"
+            scope_dimension = "pathway"
+            entity_keys = sorted({canonical_key, "pathway:raceway_conduit"})
+        elif material_identity == "certification":
+            canonical_key = "missing_info:requirement:certification"
+            anchor_type = "missing_info"
+            normalized_topic = "certification"
+            scope_dimension = "requirement"
+            entity_keys = sorted({canonical_key, "requirement:certification"})
+        elif material_identity == "site_access_gate":
+            canonical_key = "missing_info:access:site_gate"
+            anchor_type = "missing_info"
+            normalized_topic = "site_access_gate"
+            scope_dimension = "access"
+            entity_keys = sorted({canonical_key, "access:site_gate"})
+        else:
+            q_atom = _first_atom_by_type(atoms, {AtomType.open_question})
+            topic = q_atom.raw_text if q_atom else "unknown_question"
+            canonical_key = f"missing_info:{_topic_slug(topic)}"
+            anchor_type = "missing_info"
+            normalized_topic = _topic_slug(topic)
+            scope_dimension = "question"
+            entity_keys = [canonical_key]
     elif family == PacketFamily.meeting_decision:
         d_atom = _first_atom_by_type(atoms, {AtomType.decision, AtomType.meeting_commitment})
         topic = d_atom.raw_text if d_atom else "unknown_decision"

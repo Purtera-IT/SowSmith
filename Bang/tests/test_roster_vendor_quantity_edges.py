@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from app.core.compiler import compile_project
-from app.core.schemas import AuthorityClass
+from app.core.schemas import AuthorityClass, PacketFamily
 
 
 COPPER_ROOT = Path(
@@ -50,3 +50,16 @@ def test_copper_drop_schedule_vs_vendor_material_contradiction_edges() -> None:
         assert isinstance(ni, str)
         seen_identities.add(ni.lower())
     assert {"rj45", "cat6_utp", "cat6_stp"}.issubset(seen_identities)
+    qc = [p for p in result.packets if p.family == PacketFamily.quantity_conflict]
+    assert not any(
+        (p.anchor_key or "") == "device:unknown" or (p.anchor_signature and p.anchor_signature.canonical_key == "device:unknown")
+        for p in qc
+    )
+    mat_pkts = [
+        p
+        for p in result.packets
+        if p.anchor_key
+        and p.anchor_key.startswith("material:")
+        and p.family in (PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch)
+    ]
+    assert len({p.anchor_key for p in mat_pkts}) >= 3

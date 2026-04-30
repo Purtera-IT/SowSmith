@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from app.core.compiler import compile_project
+from app.core.risk import packet_pm_sort_key
 from app.core.schemas import PacketFamily
 
 
@@ -29,22 +30,16 @@ def test_site_access_packet_has_failed_dispatch_exposure(demo_project: Path) -> 
     assert all(packet.risk and packet.risk.estimated_cost_exposure == 400.0 for packet in site_access)
 
 
-def test_risk_scores_bounded_and_priority_sorted(demo_project: Path) -> None:
+def test_risk_scores_bounded_and_queue_tiers_sorted(demo_project: Path) -> None:
     result = compile_project(demo_project, project_id="demo_project", allow_unverified_receipts=True)
     assert all(packet.risk is not None for packet in result.packets)
     assert all(0.0 <= packet.risk.risk_score <= 1.0 for packet in result.packets if packet.risk)
     triage_sorted = sorted(
         result.packets,
-        key=lambda packet: (
-            packet.risk.review_priority if packet.risk else 5,
-            -(packet.risk.risk_score if packet.risk else 0.0),
-            packet.family.value,
-            packet.anchor_key,
-            packet.id,
-        ),
+        key=lambda p: packet_pm_sort_key(p) if p.risk is not None else (99, 99, 0.0, p.anchor_key, p.id),
     )
-    priorities = [packet.risk.review_priority for packet in triage_sorted if packet.risk]
-    assert priorities == sorted(priorities)
+    tiers = [packet.risk.queue_tier for packet in triage_sorted if packet.risk]
+    assert tiers == sorted(tiers)
 
 
 def test_inspect_script_prints_severity(demo_project: Path, tmp_path: Path) -> None:

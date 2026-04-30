@@ -25,3 +25,6 @@ class DomainPack(BaseModel):
     artifact_role_patterns: dict[str, list[str]] = Field(default_factory=dict)
     risk_defaults: dict[str, float] = Field(default_factory=dict)
     packet_family_hints: dict[str, list[str]] = Field(default_factory=dict)
+    # Bundled ontology YAML (relative to app/domain/) when the on-disk pack is a wide reference file
+    # not fully modeled by DomainPack; see loader._adapt_reference_pack_to_domain_pack.
+    reference_ontology_path: str | None = None

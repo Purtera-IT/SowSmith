@@ -20,6 +20,24 @@ def case_dir(root_dir: Path, case_id: str) -> Path:
     return root_dir / case_id
 
 
+def read_case_manifest_domain_pack(case_dir: Path) -> str | None:
+    """Resolve domain pack id from ``case_manifest.json`` if present."""
+    path = case_dir / "case_manifest.json"
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    for key in ("compiler_domain_pack", "domain_pack", "domain"):
+        val = data.get(key)
+        if isinstance(val, str) and val.strip():
+            return val.strip()
+    return None
+
+
 def init_case(
     root_dir: Path,
     case_id: str,
@@ -50,16 +68,27 @@ def init_case(
     return cdir
 
 
-def compile_case(root_dir: Path, case_id: str) -> dict[str, Any]:
+def compile_case(
+    root_dir: Path,
+    case_id: str,
+    *,
+    domain_pack: str | Path | None = None,
+) -> dict[str, Any]:
     cdir = case_dir(root_dir, case_id)
     artifacts = cdir / "artifacts"
     outputs = cdir / "outputs"
     outputs.mkdir(parents=True, exist_ok=True)
+    manifest_pack = read_case_manifest_domain_pack(cdir)
+    if domain_pack is not None and str(domain_pack).strip():
+        chosen_pack: str | Path | None = domain_pack
+    else:
+        chosen_pack = manifest_pack
     result = compile_project(
         project_dir=artifacts,
         project_id=case_id,
         allow_errors=True,
         allow_unverified_receipts=True,
+        domain_pack=chosen_pack,
     )
 
     compile_result_path = outputs / "compile_result.json"
@@ -94,6 +123,8 @@ def compile_case(root_dir: Path, case_id: str) -> dict[str, Any]:
         "receipt_verification_counts": dict(sorted(receipt_counts.items())),
         "invalid_governance_count": invalid_governance_count,
         "compile_duration_ms": round(float(compile_duration_ms), 3),
+        "domain_pack_id": result.manifest.domain_pack_id if result.manifest else None,
+        "domain_pack_version": result.manifest.domain_pack_version if result.manifest else None,
     }
     (outputs / "benchmark_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     return summary

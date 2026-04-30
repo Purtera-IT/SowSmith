@@ -9,6 +9,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
 from app.core.ids import stable_id
+from app.core.item_identity import merge_parser_value_identity
 from app.core.normalizers import normalize_entity_key, normalize_text, parse_quantity
 from app.core.segments import ArtifactSegment
 from app.core.schemas import (
@@ -40,7 +41,6 @@ HEADER_ALIASES: dict[str, set[str]] = {
         "labor item",
         "cable type",
         "line",
-        "device",
     },
     "quantity": {
         "qty",
@@ -145,6 +145,12 @@ HEADER_ALIASES: dict[str, set[str]] = {
         "location",
         "system",
     },
+    "vendor": {
+        "vendor",
+        "supplier",
+        "subcontractor",
+        "bidder",
+    },
 }
 
 RowKind = Literal[
@@ -211,7 +217,7 @@ def _header_map_from_two_rows(row_top: list[Any], row_bot: list[Any]) -> dict[st
     return _header_map_from_row(merged)
 
 
-def _qualifies_quote_header(header_map: dict[str, int]) -> bool:
+def _qualifies_quote_header(header_map: dict[str, int], *, strict_minimum_signals: bool = False) -> bool:
     keys = set(header_map)
     if not keys:
         return False
@@ -223,7 +229,10 @@ def _qualifies_quote_header(header_map: dict[str, int]) -> bool:
     has_inc = "included" in keys
     has_price = ("unit_price" in keys) or ("extended_price" in keys)
     has_mat = "material_spec" in keys
-    q1 = has_desc and has_qty
+    has_vendor = "vendor" in keys
+    commercial_line = has_price or has_part or has_inc or has_mat or has_vendor
+    # Routing/sniff: do not treat description+qty alone as quote-like (site rosters).
+    q1 = has_desc and has_qty and (commercial_line if strict_minimum_signals else True)
     q2 = has_desc and has_inc
     q3 = has_desc and has_price
     q4 = has_part and has_qty
@@ -888,7 +897,6 @@ class QuoteParser(BaseParser):
     def match(self, path: Path, sample_text: str | None, domain_pack: DomainPack | None) -> ParserMatch:
         del domain_pack
         suffix = path.suffix.lower()
-        filename = path.name.lower()
         confidence = 0.0
         reasons: list[str] = []
         if suffix not in {".xlsx", ".csv", ".txt"}:
@@ -898,7 +906,9 @@ class QuoteParser(BaseParser):
                 reasons=[],
                 artifact_type=ArtifactType.vendor_quote,
             )
-        if any(token in filename for token in ("quote", "po", "vendor", "bom", "pricing")):
+        from app.parsers.spreadsheet_route_signals import path_quote_filename_hint
+
+        if path_quote_filename_hint(path):
             confidence = 0.95
             reasons.append("filename_quote_hint")
         elif self.looks_like_quote_artifact(path):
@@ -940,8 +950,12 @@ class QuoteParser(BaseParser):
 
     @classmethod
     def looks_like_quote_artifact(cls, path: Path) -> bool:
-        name = path.name.lower()
-        if any(token in name for token in ("quote", "vendor", "po", "purchase_order", "bom", "pricing")):
+        from app.parsers.spreadsheet_route_signals import (
+            likely_site_roster_header_row,
+            path_quote_filename_hint,
+        )
+
+        if path_quote_filename_hint(path):
             return True
 
         suffix = path.suffix.lower()
@@ -951,7 +965,9 @@ class QuoteParser(BaseParser):
                 for sheet in workbook.worksheets:
                     rows = [list(row) for _, row in zip(range(45), sheet.iter_rows(values_only=True))]
                     idx, hmap, _, _ = _detect_header_advanced(rows, scan_limit=40)
-                    if idx is not None and _qualifies_quote_header(hmap):
+                    if idx is not None and _qualifies_quote_header(hmap, strict_minimum_signals=True):
+                        if likely_site_roster_header_row(rows[idx], hmap):
+                            continue
                         bad, _ = _sheet_is_false_positive(rows, idx, hmap)
                         if not bad:
                             return True
@@ -959,7 +975,9 @@ class QuoteParser(BaseParser):
                 content = path.read_text(encoding="utf-8", errors="ignore")
                 sample_rows = [re.split(r"[,\t|]", line) for line in content.splitlines()[:45] if line.strip()]
                 idx, hmap, _, _ = _detect_header_advanced(sample_rows, scan_limit=40)
-                if idx is not None and _qualifies_quote_header(hmap):
+                if idx is not None and _qualifies_quote_header(hmap, strict_minimum_signals=True):
+                    if likely_site_roster_header_row(sample_rows[idx], hmap):
+                        return False
                     bad, _ = _sheet_is_false_positive(sample_rows, idx, hmap)
                     if not bad:
                         return True
@@ -1263,6 +1281,10 @@ class QuoteParser(BaseParser):
             "parser_diagnostics": diagnostics[:12],
             **universals,
         }
+        vli_value = merge_parser_value_identity(
+            vli_value,
+            raw_text=f"{part_number} {description} {material_spec} {notes}".strip(),
+        )
 
         has_line = bool(
             part_number
@@ -1336,6 +1358,10 @@ class QuoteParser(BaseParser):
                     "jacket_rating": mat.get("jacket_rating"),
                     "normalized_item": mat.get("normalized_item"),
                 }
+            )
+            qval = merge_parser_value_identity(
+                qval,
+                raw_text=f"{description} {material_spec} {notes} {quantity_raw}".strip(),
             )
             append_atom(
                 AtomType.quantity,

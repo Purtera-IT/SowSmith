@@ -394,6 +394,8 @@ class PacketRisk(BaseModel):
     estimated_cost_exposure: float | None = None
     operational_impact: list[str] = Field(default_factory=list)
     review_priority: int = Field(ge=1, le=5)
+    # Lower = earlier in PM review queue (0 = procurement conflicts first; 90+ = noise / deprioritized).
+    queue_tier: int = Field(default=50, ge=0, le=99)
 
 
 class AnchorSignature(BaseModel):
@@ -464,7 +466,14 @@ class EvidencePacket(BaseModel):
     @model_validator(mode="after")
     def validate_governing_atoms(self) -> "EvidencePacket":
         if self.status in {PacketStatus.active, PacketStatus.needs_review} and len(self.governing_atom_ids) < 1:
-            raise ValueError("Active or needs_review packets require governing_atom_ids")
+            allow_vendor_pollution_orphan = (
+                self.family == PacketFamily.scope_exclusion
+                and self.review_flags
+                and "vendor_scope_pollution_candidate" in self.review_flags
+                and "power_vendor_scope_mismatch" not in self.review_flags
+            )
+            if not allow_vendor_pollution_orphan:
+                raise ValueError("Active or needs_review packets require governing_atom_ids")
         if not self.packet_id:
             self.packet_id = self.id
         if not self.topic:

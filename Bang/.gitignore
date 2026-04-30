@@ -1,4 +1,6 @@
 .venv/
+.purtera_artifacts/
+tmp_quote_test.xlsx
 __pycache__/
 .pytest_cache/
 *.pyc

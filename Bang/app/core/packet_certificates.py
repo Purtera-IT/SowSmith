@@ -193,12 +193,17 @@ def _minimal_sufficient_ids(
         if contradicted_inclusion:
             minimal.append(contradicted_inclusion)
     elif packet.family == PacketFamily.site_access:
-        access_atom = next(
-            (aid for aid in support_ids + governing_ids if atom_by_id[aid].atom_type == AtomType.constraint),
-            None,
-        )
-        if access_atom:
-            minimal.append(access_atom)
+        for aid in governing_ids + support_ids:
+            a = atom_by_id.get(aid)
+            if a and a.atom_type in {
+                AtomType.constraint,
+                AtomType.customer_instruction,
+                AtomType.action_item,
+                AtomType.open_question,
+                AtomType.scope_item,
+            }:
+                minimal.append(aid)
+                break
     elif packet.family == PacketFamily.vendor_mismatch:
         scope_qty = sorted(
             {
@@ -227,6 +232,41 @@ def _minimal_sufficient_ids(
         )
         if question_atom:
             minimal.append(question_atom)
+        elif packet.review_flags and "raceway_conduit_pathway_missing_info" in packet.review_flags:
+            for aid in governing_ids + support_ids:
+                a = atom_by_id.get(aid)
+                if a and a.atom_type in {
+                    AtomType.customer_instruction,
+                    AtomType.action_item,
+                    AtomType.scope_item,
+                    AtomType.exclusion,
+                }:
+                    minimal.append(aid)
+                    break
+        elif packet.review_flags and "certification_testing_export_missing_info" in packet.review_flags:
+            for aid in governing_ids + support_ids:
+                a = atom_by_id.get(aid)
+                if a and a.authority_class in {
+                    AuthorityClass.approved_site_roster,
+                    AuthorityClass.customer_current_authored,
+                    AuthorityClass.contractual_scope,
+                    AuthorityClass.meeting_note,
+                } and a.atom_type in {
+                    AtomType.customer_instruction,
+                    AtomType.action_item,
+                    AtomType.scope_item,
+                    AtomType.exclusion,
+                    AtomType.quantity,
+                }:
+                    minimal.append(aid)
+                    break
+        elif packet.review_flags and "missing_info_access_gate" in packet.review_flags:
+            q_atom = next(
+                (aid for aid in governing_ids + support_ids if atom_by_id[aid].atom_type == AtomType.open_question),
+                None,
+            )
+            if q_atom:
+                minimal.append(q_atom)
     elif packet.family == PacketFamily.meeting_decision:
         decision_atom = next(
             (

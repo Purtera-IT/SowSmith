@@ -15,11 +15,15 @@ def test_every_demo_packet_has_certificate(demo_project: Path) -> None:
 
 def test_quantity_conflict_certificate_minimal_set_and_reason(demo_project: Path) -> None:
     result = compile_project(demo_project, project_id="demo_project", allow_unverified_receipts=True)
-    packet = next(
-        packet
-        for packet in result.packets
-        if packet.family == PacketFamily.quantity_conflict and "91" in packet.reason and "72" in packet.reason
-    )
+    commercial = [
+        p
+        for p in result.packets
+        if p.family in (PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch)
+        and "91" in p.reason
+        and "72" in p.reason
+    ]
+    assert commercial, "expected roster aggregate vs vendor quantity surfaced on a commercial packet"
+    packet = commercial[0]
     assert packet.certificate is not None
     minimal_ids = packet.certificate.minimal_sufficient_atom_ids
     assert len(minimal_ids) >= 2
@@ -78,3 +82,17 @@ def test_packet_validation_fails_if_certificate_missing(demo_project: Path) -> N
     result.packets[0].certificate = None
     messages = validate_compile_result(result, source_files_available=True)
     assert any("missing certificate" in msg for msg in messages if msg.startswith("ERROR:"))
+
+
+def test_packet_certificate_domain_pack_reflects_copper_selection(demo_project: Path) -> None:
+    result = compile_project(
+        demo_project,
+        project_id="demo_project",
+        allow_unverified_receipts=True,
+        domain_pack="copper_cabling",
+    )
+    assert result.manifest and result.manifest.domain_pack_id == "copper_cabling"
+    for packet in result.packets:
+        assert packet.certificate is not None
+        assert packet.certificate.domain_pack_id == "copper_cabling"
+        assert packet.certificate.domain_pack_version == "0.4.0-generated"

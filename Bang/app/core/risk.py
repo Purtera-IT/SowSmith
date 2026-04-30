@@ -7,13 +7,13 @@ from app.core.normalizers import normalize_text
 from app.core.schemas import AtomType, EvidenceAtom, EvidenceEdge, EvidencePacket, PacketFamily, PacketRisk, PacketStatus
 
 _BASE_RISK: dict[PacketFamily, float] = {
-    PacketFamily.quantity_conflict: 0.75,
-    PacketFamily.vendor_mismatch: 0.80,
+    PacketFamily.quantity_conflict: 0.82,
+    PacketFamily.vendor_mismatch: 0.83,
     PacketFamily.scope_exclusion: 0.85,
-    PacketFamily.site_access: 0.65,
-    PacketFamily.missing_info: 0.60,
+    PacketFamily.site_access: 0.68,
+    PacketFamily.missing_info: 0.64,
     PacketFamily.meeting_decision: 0.55,
-    PacketFamily.action_item: 0.40,
+    PacketFamily.action_item: 0.36,
     PacketFamily.scope_inclusion: 0.20,
     PacketFamily.customer_override: 0.70,
     PacketFamily.quantity_claim: 0.35,
@@ -31,6 +31,81 @@ _OPS_IMPACT: dict[PacketFamily, list[str]] = {
     PacketFamily.customer_override: ["scope_baseline", "commercial_alignment"],
     PacketFamily.quantity_claim: ["baseline_tracking"],
 }
+
+
+def pm_material_mismatch_order(anchor_key: str | None) -> int:
+    """Tie-break among COPPER-style material anchors (lower = earlier in queue)."""
+    a = (anchor_key or "").lower()
+    if "rj45" in a:
+        return 0
+    if "cat6_utp" in a or ("cat6" in a and "utp" in a):
+        return 1
+    if "cat6_stp" in a or ("cat6" in a and ("stp" in a or "shield" in a)):
+        return 2
+    return 50
+
+
+def compute_pm_queue_tier(
+    *,
+    family: str,
+    anchor_key: str | None,
+    review_flags: list[str] | None,
+    status: str | None,
+) -> int:
+    """PM-facing ordering: lower tier = review sooner. Aligns with COPPER_001 expectations."""
+    flags = set(review_flags or [])
+    anchor = (anchor_key or "").lower()
+
+    if "device:unknown" in anchor or anchor in ("site:unknown", "entity:unknown"):
+        return 92
+    if family == "scope_inclusion" and status == "active":
+        return 85
+
+    if family == "quantity_conflict":
+        return 0
+    if family == "vendor_mismatch" and "vendor_scope_quantity_mismatch" in flags:
+        return 1
+
+    if family == "scope_exclusion" and (
+        "power_vendor_scope_mismatch" in flags
+        or "scope_pollution_vendor_vs_written_exclusion" in flags
+        or "vendor_scope_pollution_candidate" in flags
+    ):
+        return 2
+
+    if family == "missing_info":
+        if "raceway_conduit_pathway_missing_info" in flags:
+            return 3
+        if "certification_testing_export_missing_info" in flags:
+            return 4
+        if "missing_info_access_gate" in flags or "site_access_gate_unknown" in flags:
+            return 5
+        return 6
+
+    if family == "site_access":
+        return 7
+
+    if family == "scope_exclusion":
+        return 8
+
+    if family == "meeting_decision":
+        return 9
+    if family == "customer_override":
+        return 10
+
+    if family == "action_item":
+        return 11
+
+    return 40
+
+
+def packet_pm_sort_key(packet: EvidencePacket) -> tuple[int, int, float, str, str]:
+    """Sort key for packet lists: ascending tuple = higher PM priority first."""
+    risk = packet.risk
+    tier = risk.queue_tier if risk is not None else 50
+    mat = pm_material_mismatch_order(packet.anchor_key)
+    score = -(risk.risk_score if risk is not None else 0.0)
+    return (tier, mat, score, packet.anchor_key, packet.id)
 
 
 def _unit_exposure_from_atoms(atoms: list[EvidenceAtom]) -> float:
@@ -102,7 +177,37 @@ def _severity(score: float) -> str:
     return "low"
 
 
-def _priority(severity: str, packet: EvidencePacket) -> int:
+def _action_item_atom_low_priority(atoms: list[EvidenceAtom], packet: EvidencePacket) -> bool:
+    if packet.family != PacketFamily.action_item or len(atoms) != 1:
+        return False
+    atom = atoms[0]
+    if atom.atom_type != AtomType.action_item:
+        return False
+    text = normalize_text(atom.raw_text)
+    risky = any(
+        token in text for token in ("scope", "add", "remove", "price", "cost", "commercial", "change")
+    )
+    access_lift = any(
+        token in text
+        for token in (
+            "lift",
+            "catwalk",
+            "access",
+            "badge",
+            "mdf",
+            "idf",
+            "escort",
+            "after-hours",
+            "after hours",
+            "ceiling",
+            "boom",
+            "scissor",
+        )
+    )
+    return not risky and not access_lift
+
+
+def _priority(severity: str, packet: EvidencePacket, atoms: list[EvidenceAtom]) -> int:
     if packet.review_flags and "roster_vendor_aggregate_mismatch" in packet.review_flags:
         if severity == "low":
             return 3
@@ -110,6 +215,8 @@ def _priority(severity: str, packet: EvidencePacket) -> int:
             return 2
     if packet.family == PacketFamily.scope_inclusion and packet.status == PacketStatus.active:
         return 5
+    if packet.family == PacketFamily.action_item and _action_item_atom_low_priority(atoms, packet):
+        return 4
     if severity == "critical":
         return 1
     if severity == "high":
@@ -123,28 +230,59 @@ def score_packet_risk(packet: EvidencePacket, atoms: list[EvidenceAtom], edges: 
     del edges
     score = _BASE_RISK.get(packet.family, 0.50)
     reasons: list[str] = [f"base:{packet.family.value}={score:.2f}"]
+    flags = set(packet.review_flags or [])
 
     if packet.status == PacketStatus.needs_review:
         score += 0.10
         reasons.append("status:needs_review")
-    if "contradiction_present" in packet.review_flags:
+    if "contradiction_present" in flags:
         score += 0.10
         reasons.append("flag:contradiction_present")
-    if "customer_current_override" in packet.review_flags:
+    if "customer_current_override" in flags:
         score += 0.10
         reasons.append("flag:customer_current_override")
-    if "exclusion_present" in packet.review_flags:
+    if "exclusion_present" in flags:
         score += 0.10
         reasons.append("flag:exclusion_present")
-    if "vendor_scope_quantity_mismatch" in packet.review_flags:
+    if "vendor_scope_quantity_mismatch" in flags:
         score += 0.15
         reasons.append("flag:vendor_scope_quantity_mismatch")
-    if "roster_vendor_aggregate_mismatch" in packet.review_flags:
+    if "roster_vendor_aggregate_mismatch" in flags:
         score += 0.08
         reasons.append("flag:roster_vendor_aggregate_mismatch")
-    if "low_confidence_atom" in packet.review_flags:
+    if "low_confidence_atom" in flags:
         score += 0.05
         reasons.append("flag:low_confidence_atom")
+
+    if packet.family in {PacketFamily.quantity_conflict, PacketFamily.vendor_mismatch}:
+        score += 0.04
+        reasons.append("commercial_procurement_impact")
+
+    if packet.family == PacketFamily.scope_exclusion and flags & {
+        "power_vendor_scope_mismatch",
+        "scope_pollution_vendor_vs_written_exclusion",
+        "vendor_scope_pollution_candidate",
+    }:
+        score += 0.10
+        reasons.append("vendor_written_scope_power_contradiction")
+
+    if packet.family == PacketFamily.missing_info:
+        if flags & {
+            "raceway_conduit_pathway_missing_info",
+            "certification_testing_export_missing_info",
+            "missing_info_access_gate",
+            "site_access_gate_unknown",
+        }:
+            score += 0.08
+            reasons.append("missing_info_blocks_quote_schedule_or_testing")
+
+    if packet.family == PacketFamily.site_access:
+        score += 0.03
+        reasons.append("site_access_mobilization_impact")
+
+    if packet.family == PacketFamily.action_item and _action_item_atom_low_priority(atoms, packet):
+        score = max(0.0, score - 0.14)
+        reasons.append("generic_action_item_demotion")
 
     if packet.certificate is not None:
         if packet.certificate.ambiguity_score > 0.5:
@@ -157,11 +295,18 @@ def score_packet_risk(packet: EvidencePacket, atoms: list[EvidenceAtom], edges: 
 
     score = max(0.0, min(1.0, round(score, 4)))
     severity = _severity(score)
+    queue_tier = compute_pm_queue_tier(
+        family=packet.family.value,
+        anchor_key=packet.anchor_key,
+        review_flags=list(packet.review_flags or []),
+        status=packet.status.value,
+    )
     return PacketRisk(
         risk_score=score,
         severity=severity,  # type: ignore[arg-type]
         risk_reasons=sorted(reasons),
         estimated_cost_exposure=_estimate_cost(packet, atoms),
         operational_impact=_OPS_IMPACT.get(packet.family, ["general_review"]),
-        review_priority=_priority(severity, packet),
+        review_priority=_priority(severity, packet, atoms),
+        queue_tier=queue_tier,
     )

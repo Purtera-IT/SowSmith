@@ -118,6 +118,54 @@ def test_aggregate_scoped_quantity_contradicts_vendor_quantity() -> None:
     )
 
 
+def test_different_plate_roster_line_items_same_material_no_contradiction() -> None:
+    """Different plates are different scope rows; same site + same identity is not a conflict."""
+    a1 = _atom(
+        "p1",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["site:spring_lake", "plate:avl_1"],
+        quantity=1,
+        text="RJ45 plate AVL-1",
+        value_extra={"normalized_item": "rj45"},
+    )
+    a2 = _atom(
+        "p2",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["site:spring_lake", "plate:avl_2"],
+        quantity=2,
+        text="RJ45 plate AVL-2",
+        value_extra={"normalized_item": "rj45"},
+    )
+    edges = build_edges("proj_plates", [a1, a2], [])
+    assert not any(e.edge_type == EdgeType.contradicts for e in edges)
+
+
+def test_same_plate_roster_vs_customer_quantity_contradicts() -> None:
+    """Same plate + same material + different qty across authorities is a real conflict."""
+    roster = _atom(
+        "r_pl",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.approved_site_roster,
+        entity_keys=["site:spring_lake", "plate:avl_1"],
+        quantity=1,
+        text="RJ45 AVL-1",
+        value_extra={"normalized_item": "rj45"},
+    )
+    revised = _atom(
+        "c_pl",
+        atom_type=AtomType.quantity,
+        authority=AuthorityClass.customer_current_authored,
+        entity_keys=["site:spring_lake", "plate:avl_1"],
+        quantity=2,
+        text="RJ45 AVL-1 revised",
+        value_extra={"normalized_item": "rj45"},
+    )
+    edges = build_edges("proj_same_plate", [roster, revised], [])
+    assert any(e.edge_type == EdgeType.contradicts for e in edges)
+
+
 def test_material_identity_roster_vendor_quantity_contradictions() -> None:
     roster_rj = _atom(
         "r_rj",

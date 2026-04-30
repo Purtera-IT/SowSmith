@@ -23,7 +23,7 @@ from app.core.manifest import (
 )
 from app.core.packet_certificates import build_packet_certificate
 from app.core.packetizer import build_packets
-from app.core.risk import score_packet_risk
+from app.core.risk import packet_pm_sort_key, score_packet_risk
 from app.core.schemas import COMPILER_VERSION, SCHEMA_VERSION, CandidateAtom, CompileResult, ParserOutput
 from app.core.source_replay import attach_receipts_to_atoms, summarize_receipts
 from app.core.telemetry import CompileTelemetry
@@ -58,6 +58,11 @@ def compile_project(
     set_active_domain_pack(resolved_domain_pack)
     telemetry = CompileTelemetry(project_id=resolved_project_id)
     warnings: list[str] = []
+    if resolved_domain_pack.reference_ontology_path:
+        warnings.append(
+            "WARNING: Domain pack uses reference-schema subset adapter (TODO: strict DomainPack mapper); "
+            f"bundled ontology: {resolved_domain_pack.reference_ontology_path}"
+        )
     atoms = []
     candidates: list[CandidateAtom] = []
     rejected_candidates: list[CandidateAtom] = []
@@ -270,7 +275,10 @@ def compile_project(
     result.atoms = sorted(result.atoms, key=lambda x: x.id)
     result.entities = sorted(result.entities, key=lambda x: x.id)
     result.edges = sorted(result.edges, key=lambda x: x.id)
-    result.packets = sorted(result.packets, key=lambda x: x.id)
+    result.packets = sorted(
+        result.packets,
+        key=lambda p: packet_pm_sort_key(p) if p.risk is not None else (50, 50, 0.0, p.anchor_key, p.id),
+    )
     if calibrator_path is not None:
         with telemetry.stage("confidence_calibration", input_count=len(result.packets)) as stage:
             try:

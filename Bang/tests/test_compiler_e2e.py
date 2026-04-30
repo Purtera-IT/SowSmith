@@ -70,9 +70,11 @@ def test_compiler_e2e_golden_regression(demo_project: Path, tmp_path: Path) -> N
     assert west_governing.authority_class == AuthorityClass.customer_current_authored
     assert west_governing.atom_type.value == "exclusion"
 
-    # Quantity conflict reason should include aggregate 91 vs 72 mismatch.
-    quantity_conflicts = [p for p in result.packets if p.family.value == "quantity_conflict"]
-    assert any("91" in p.reason and "72" in p.reason for p in quantity_conflicts)
+    # Roster aggregate (91) vs vendor line (72) is emitted on vendor_mismatch; per-site vs vendor may be quantity_conflict.
+    commercial_qty_packets = [
+        p for p in result.packets if p.family.value in {"quantity_conflict", "vendor_mismatch"}
+    ]
+    assert any("91" in p.reason and "72" in p.reason for p in commercial_qty_packets)
 
     # Anchor sanity from golden summary (high-level, non-ID sensitive).
     for family, expected_anchors in expected["anchors"].items():

@@ -10,6 +10,7 @@ from openpyxl import load_workbook
 from openpyxl.utils import get_column_letter
 
 from app.core.ids import stable_id
+from app.core.item_identity import merge_parser_value_identity
 from app.core.normalizers import normalize_entity_key, normalize_text, parse_quantity
 from app.core.segments import ArtifactSegment
 from app.core.schemas import (
@@ -531,8 +532,22 @@ class XlsxParser(BaseParser):
         confidence = 0.0
         reasons: list[str] = []
         if suffix in {".xlsx", ".csv"}:
-            confidence = 0.72
+            from app.parsers.spreadsheet_route_signals import (
+                path_roster_schedule_hint,
+                sniff_xlsx_roster_schedule_strength,
+            )
+
+            confidence = 0.58
             reasons.append(f"spreadsheet_extension:{suffix}")
+            if path_roster_schedule_hint(path):
+                confidence += 0.14
+                reasons.append("xlsx_match:path_roster_schedule_token")
+            try:
+                xscore, _xr = sniff_xlsx_roster_schedule_strength(path)
+                confidence = min(0.92, confidence + 0.22 * xscore)
+                reasons.append(f"xlsx_match:schedule_strength={xscore:.2f}")
+            except Exception:  # noqa: BLE001
+                reasons.append("xlsx_match:schedule_sniff_failed")
         return ParserMatch(
             parser_name=self.parser_name,
             confidence=confidence,
@@ -796,6 +811,7 @@ class XlsxParser(BaseParser):
                     "source_row_type": "total",
                     "aggregate": True,
                 }
+                value = merge_parser_value_identity(value, raw_text=f"Total {wcol['item']} {qty}")
                 atoms.append(
                     EvidenceAtom(
                         id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, "qty_total", wcol["normalized_item"], str(qty)),
@@ -829,6 +845,7 @@ class XlsxParser(BaseParser):
         columns = {"total_label": label_letter, "quantity": get_column_letter(qidx + 1)}
         source_ref = self._build_source_ref(artifact_id, artifact_type, filename, sheet_name, row_number, columns)
         value = {**parsed, "source_row_type": "total", "aggregate": True, "item": "total", "normalized_item": "total"}
+        value = merge_parser_value_identity(value, raw_text=f"Total quantity {qty}")
         atoms.append(
             EvidenceAtom(
                 id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, "qty_total_single", str(qty)),
@@ -978,6 +995,10 @@ class XlsxParser(BaseParser):
                     "plate_id": plate or None,
                     "location": location or None,
                 }
+                value = merge_parser_value_identity(
+                    value,
+                    raw_text=f"{wcol['item']} {scope} {location} {row[idx]}".strip(),
+                )
                 rev = ReviewStatus.needs_review if parsed.get("review_flags") else ReviewStatus.auto_accepted
                 atoms.append(
                     EvidenceAtom(
@@ -1020,6 +1041,7 @@ class XlsxParser(BaseParser):
                 if parsed.get("uncertain"):
                     flags.append("quantity_uncertain")
                 value = {**parsed, "source_row_type": "line_item", "aggregate": False}
+                value = merge_parser_value_identity(value, raw_text=f"Quantity {quantity_raw} {scope}")
                 atoms.append(
                     EvidenceAtom(
                         id=stable_id("atm", project_id, artifact_id, sheet_name, row_number, "qty", quantity_raw),
