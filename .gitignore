@@ -1,6 +1,1 @@
 .DS_Store
-*_pipeline_bundle.zip
-.purtera_artifacts/
-.pytest_cache/
-purtera_mvp.db
-purtera_evidence_mvp.egg-info/

@@ -1,11 +1,16 @@
 # SowSmith
 
-Container repo for Purtera **Parser OS** tooling.
+This repository is **intentionally empty** except for this note.
 
-## Layout
+**Parser OS** (evidence compiler, parsers, tests, scripts, domain packs, real-data cases) now lives here:
 
-| Path | Purpose |
-|------|---------|
-| **`parser-os/`** | Parser OS — evidence compiler (artifacts → atoms → graph → packets). Run `pip install -e ".[dev]"` from that directory. |
+**https://github.com/Purtera-IT/parser-os**
 
-Package name in `pyproject.toml`: `purtera-evidence-mvp`.
+Clone that repository and from its root run:
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+Package name: `purtera-evidence-mvp` (see `pyproject.toml` in **parser-os**).
