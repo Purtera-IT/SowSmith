@@ -67,6 +67,26 @@ def test_bom_part_description_qty_routes_to_quote(tmp_path: Path) -> None:
     assert match.parser_name == "quote"
 
 
+def test_site_list_still_xlsx_when_ancestor_dir_contains_vendor_token(tmp_path: Path) -> None:
+    """Pytest tmp dirs may include 'vendor' (e.g. test names); routing must use path tail only."""
+    deep = (
+        tmp_path
+        / "pytest-of-x"
+        / "pytest-0"
+        / "test_ip_camera_vendor_mismatch0"
+        / "repo"
+        / "tests"
+        / "fixtures"
+        / "demo_project"
+    )
+    deep.mkdir(parents=True)
+    path = deep / "site_list.xlsx"
+    _save_xlsx(path, ["Site", "Device", "Qty"], ["Main", "IP Camera", "1"])
+    parser, match, _ = choose_parser(path, domain_pack=None)
+    assert parser is not None
+    assert match.parser_name == "xlsx"
+
+
 def test_ambiguous_path_logs_tie_decision_reasons(tmp_path: Path) -> None:
     path = tmp_path / "scope_matrix_vendor_estimate.xlsx"
     _save_xlsx(path, ["Site", "Device", "Qty"], ["A", "X", "1"])

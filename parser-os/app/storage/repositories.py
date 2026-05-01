@@ -10,7 +10,8 @@ from app.core.schemas import CompileResult, EvidenceAtom, EvidenceEdge, Evidence
 from app.storage.db import get_connection, init_db
 from app.storage.models import ArtifactRow, CompileResultRow, ProjectRow
 
-CACHE_ROOT = Path(".purtera_artifacts") / "cache"
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+CACHE_ROOT = _PROJECT_ROOT / ".purtera_artifacts" / "cache"
 
 
 def _now_iso() -> str:

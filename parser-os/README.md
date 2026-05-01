@@ -1,5 +1,7 @@
 # Parser OS (Purtera Evidence Compiler)
 
+Evidence Compiler: artifacts -> atoms -> graph -> packets
+
 **Parser OS** — local evidence compiler: artifacts → atoms → graph → packets.
 
 PyPI / install name: `purtera-evidence-mvp` (see `pyproject.toml`). This tree lives under the **`parser-os/`** directory in the SowSmith repo.

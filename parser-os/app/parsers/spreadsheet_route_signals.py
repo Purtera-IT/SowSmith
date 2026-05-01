@@ -66,23 +66,41 @@ def _segment_matches_quote_token(seg: str, tok: str) -> bool:
     return tok in chunks or base == tok
 
 
+def _path_segments_for_routing_tokens(path: Path, *, max_levels: int = 5) -> list[str]:
+    """
+    Walk up from the file toward the root, collecting at most ``max_levels`` names.
+
+    Using the full absolute path string matched pytest tmp directory names (e.g.
+    ``test_ip_camera_vendor_mismatch0``) against routing tokens like \"vendor\".
+    """
+    parts: list[str] = []
+    cur: Path = path
+    for _ in range(max_levels):
+        parts.append(cur.name)
+        parent = cur.parent
+        if parent == cur:
+            break
+        cur = parent
+    return list(reversed(parts))
+
+
 def path_quote_filename_hint(path: Path) -> bool:
-    p = str(path).lower().replace("\\", "/")
-    for seg in p.split("/"):
-        if not seg:
+    for seg in _path_segments_for_routing_tokens(path):
+        seg_l = seg.lower()
+        if not seg_l:
             continue
         for tok in QUOTE_PATH_TOKENS:
-            if _segment_matches_quote_token(seg, tok):
+            if _segment_matches_quote_token(seg_l, tok):
                 return True
     return False
 
 
 def path_roster_schedule_hint(path: Path) -> bool:
-    p = str(path).lower().replace("\\", "/")
-    p_compact = p.replace(" ", "").replace("-", "_")
-    if "sitelist" in p_compact:
+    tail = "/".join(_path_segments_for_routing_tokens(path)).lower()
+    tail_compact = tail.replace(" ", "").replace("-", "_")
+    if "sitelist" in tail_compact:
         return True
-    return any(tok in p for tok in ROSTER_SCHEDULE_PATH_TOKENS)
+    return any(tok in tail for tok in ROSTER_SCHEDULE_PATH_TOKENS)
 
 
 def _header_blob_from_row(row: list[Any]) -> str:
