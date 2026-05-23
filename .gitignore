@@ -1,1 +1,30 @@
 .DS_Store
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# Local dev
+.venv/
+venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
