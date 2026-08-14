@@ -271,6 +271,25 @@ def _section_change_orders(envelope: dict[str, Any]) -> str:
     entries = ct.get("entries") or []
     out = ["## 6. Change Order History\n"]
     if not entries:
+        # The timeline is a precomputed structure and it arrives empty
+        # ({"entries": [], "entry_count": 0}) on deals that nonetheless carry
+        # change_order_rule atoms — 9 of them on one audited deal, none rendered.
+        # A rule ("reschedule within 1 business day incurs 100% of planned cost")
+        # is not a change EVENT, so it is listed separately rather than faked
+        # into the events table.
+        rules = _atoms_of_type(envelope, "change_order_rule")
+        if rules:
+            out.append(
+                f"_No change events recorded. **{len(rules)}** change-order "
+                f"rule(s) govern this deal:_\n"
+            )
+            for atom in rules[:15]:
+                text = _atom_text(atom).replace("\n", " ")
+                if text:
+                    out.append(f"- {text[:240]}  \n  _Source: atom `{atom.get('id', '—')}`_")
+            if len(rules) > 15:
+                out.append(f"\n_(+{len(rules) - 15} additional rule atoms not shown)_")
+            return "\n".join(out)
         out.append("_No change orders recorded in discovery artifacts._")
         return "\n".join(out)
     out.append(
@@ -363,6 +382,69 @@ def _section_sla_and_support(envelope: dict[str, Any]) -> str:
     return "\n".join(out)
 
 
+def _is_internal_qa(atom: dict[str, Any]) -> bool:
+    """True when an atom is tooling QA rather than contract content.
+
+    Sourcing acceptance from `acceptance_criterion` is right, but that type also
+    catches validation sheets. One deal's Dispatch_Readiness workbook carried a
+    QA_Checks tab whose 13 rows are the tooling checking its own import --
+
+        "Opening Soon sites scheduled | PASS | 3 | Included, not auto-pushed"
+        "Pending rows with valid HC imported | PASS | 428 | Expected 428 ..."
+
+    -- and they read exactly like an acceptance table (criterion, PASS,
+    threshold), which is why the classifier types them that way and why a guard
+    is needed rather than better prompting. Printing them as contractual
+    acceptance criteria is worse than the empty placeholder they replaced.
+
+    Note the underscore normalisation: "QA_Checks" defeats a naive \bqa\b.
+    """
+    import re as _re
+
+    section = " ".join(str(x) for x in (atom.get("section_path") or []))
+    section = _re.sub(r"[_\-/]+", " ", section)
+    # No bare "checks?" — a genuine section is often called "Acceptance Checks".
+    return bool(
+        _re.search(
+            r"(?i)\b(qa|qc|quality\s*check\w*|validation|sanity\s*check\w*|"
+            r"data\s*check\w*)\b",
+            section,
+        )
+    )
+
+
+def _atoms_of_type(envelope: dict[str, Any], atom_type: str) -> list[dict[str, Any]]:
+    """Atoms of one type, via the index when present, else by scanning."""
+    atoms = envelope.get("atoms") or []
+    by_id = {a.get("id"): a for a in atoms if isinstance(a, dict)}
+    ids = ((envelope.get("indexes") or {}).get("atoms_by_atom_type") or {}).get(atom_type)
+    if ids:
+        return [by_id[i] for i in ids if i in by_id]
+    return [a for a in atoms if isinstance(a, dict) and a.get("atom_type") == atom_type]
+
+
+def _atom_text(atom: dict[str, Any] | None) -> str:
+    """The atom's text, whatever the producer called it.
+
+    render.py read `atom.get("raw_text")` in four places and envelope atoms carry
+    `text`. Every lookup returned "" and the sections concluded there was no
+    data: "Site Access, Safety & Constraints" printed "_No site-access or safety
+    constraints captured._" on a deal whose envelope held 19 constraint atoms,
+    including "If surface-mounted raceway is installed on wall surfaces...".
+
+    A dict .get() yields None instead of raising, so a field rename downstream is
+    indistinguishable from an empty document — which is exactly how this survived.
+    Both spellings are accepted so neither producer can break the SOW again.
+    """
+    if not isinstance(atom, dict):
+        return ""
+    for key in ("text", "raw_text", "normalized_text"):
+        val = atom.get(key)
+        if isinstance(val, str) and val.strip():
+            return val.strip()
+    return ""
+
+
 def _section_constraints(envelope: dict[str, Any]) -> str:
     indexes = envelope.get("indexes") or {}
     by_type = indexes.get("atoms_by_atom_type") or {}
@@ -378,7 +460,7 @@ def _section_constraints(envelope: dict[str, Any]) -> str:
         atom = atom_by_id.get(aid)
         if not atom:
             continue
-        text = (atom.get("raw_text") or "").strip().replace("\n", " ")
+        text = _atom_text(atom).replace("\n", " ")
         if not text:
             continue
         rendered += 1
@@ -393,30 +475,53 @@ def _section_constraints(envelope: dict[str, Any]) -> str:
 def _section_acceptance(envelope: dict[str, Any]) -> str:
     indexes = envelope.get("indexes") or {}
     by_type = indexes.get("atoms_by_atom_type") or {}
-    decision_ids = by_type.get("decision", []) + by_type.get("meeting_commitment", [])
+    # `acceptance_criterion` FIRST — it is the atom type the parser emits for
+    # exactly this section, and it was not consulted at all. The section built
+    # from `decision` + `meeting_commitment`, which were 0 and 0 on every audited
+    # deal, so it always fell through to a keyword scan or to "[NEEDS DATA]".
+    # ONLY `acceptance_criterion`. This section was built from `decision` +
+    # `meeting_commitment`, and those are not acceptance criteria: on one deal
+    # they rendered "Corporate and Technology business units centralized at HQ
+    # office in Maryville, TN" as a contractual acceptance criterion. A section
+    # that says [NEEDS DATA] is honest; one filled with unrelated statements
+    # asserts the deal is covered when it is not.
+    decision_ids = by_type.get("acceptance_criterion", [])
     atoms = envelope.get("atoms") or []
     atom_by_id = {a.get("id"): a for a in atoms}
     out = ["## 12. Acceptance Criteria\n"]
     if not decision_ids:
-        # Fallback: look for text-matched acceptance phrases.
+        # Was: scan EVERY atom for the word "acceptance" / "sign-off". On a deal
+        # whose envelope carried no atom-type index, that rendered email chatter
+        # as contractual acceptance criteria —
+        #
+        #   "Can you action the attached Redlines ASAP from the customer?"
+        #   "@Ryan Adamski ... do you need anything else to move forward?"
+        #
+        # — which is worse than the placeholder it replaced. Resolve by TYPE
+        # instead: _atoms_of_type scans atom_type directly when the index is
+        # absent, which is the case the keyword scan was really compensating for.
         candidates = [
-            a for a in atoms
-            if any(t in (a.get("raw_text") or "").lower()
-                   for t in ("acceptance", "sign-off", "signoff", "completion criteria"))
+            a
+            for t in ("acceptance_criterion",)
+            for a in _atoms_of_type(envelope, t)
+            if not _is_internal_qa(a) and _atom_text(a)
         ]
         if not candidates:
             out.append("_[NEEDS DATA: no explicit acceptance criteria captured.]_")
             return "\n".join(out)
-        for a in candidates[:10]:
-            text = (a.get("raw_text") or "").strip()
-            out.append(f"- {text[:240]}  \n  _Source: atom `{a.get('id', '—')}`_")
+        for a in candidates[:15]:
+            out.append(
+                f"- {_atom_text(a)[:240]}  \n  _Source: atom `{a.get('id', '—')}`_"
+            )
         return "\n".join(out)
     rendered = 0
     for aid in decision_ids[:30]:
         atom = atom_by_id.get(aid)
         if not atom:
             continue
-        text = (atom.get("raw_text") or "").strip()
+        if _is_internal_qa(atom):
+            continue
+        text = _atom_text(atom)
         if not text:
             continue
         rendered += 1
