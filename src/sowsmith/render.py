@@ -233,11 +233,65 @@ def _section_sites(envelope: dict[str, Any]) -> str:
     return "\n".join(out)
 
 
+def _atom_bullets(
+    envelope: dict[str, Any],
+    types: tuple[str, ...],
+    *,
+    limit: int = 25,
+    label: str = "",
+) -> list[str]:
+    """Bullets for typed atoms, so a section is never empty while its data exists.
+
+    Every section here reads a precomputed pm_dashboard / scope_truth surface and
+    prints "[NEEDS DATA]" when that surface is empty — without ever looking at the
+    typed atoms sitting in the same envelope. Measured on 01491cca: 40
+    service_line, 22 task, 10 deliverable, 16 compliance*, 5 contract_term and 3
+    site-access atoms were parsed and reached NO section of the SOW, while
+    "Scope of Work" and "SLA & Support Terms" both rendered as placeholders.
+
+    Deduped on text because the same clause is often restated across artifacts.
+    """
+    out: list[str] = []
+    seen: set[str] = set()
+    for atom_type in types:
+        for atom in _atoms_of_type(envelope, atom_type):
+            if _is_internal_qa(atom):
+                continue
+            text = _atom_text(atom).replace(chr(10), " ").strip()
+            if len(text) < 12:
+                continue
+            key = text.lower()[:140]
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(
+                "- " + text[:240] + "  " + chr(10)
+                + "  _Source: atom `" + str(atom.get("id", "-")) + "`_"
+            )
+            if len(out) >= limit:
+                return out
+    return out
+
+
 def _section_scope_of_work(envelope: dict[str, Any]) -> str:
     scope = envelope.get("scope_truth") or {}
     devices = scope.get("devices") or []
     out = ["## 5. Scope of Work\n"]
+    # The device table is a QUANTITY view. A SOW's scope is also the services,
+    # tasks and deliverables — 40 service_line, 22 task and 10 deliverable atoms
+    # on 01491cca reached no section at all while this one said "[NEEDS DATA]".
+    work = _atom_bullets(
+        envelope, ("service_line", "work_scope_item", "task", "deliverable"), limit=30
+    )
     if not devices:
+        if work:
+            out.append(
+                "_No device-level quantity claims; the scope below is drawn from "
+                "the service, task and deliverable statements in the source "
+                "artifacts._\n"
+            )
+            out.extend(work)
+            return "\n".join(out)
         out.append("_[NEEDS DATA: no device-level scope claims in discovery artifacts.]_")
         return "\n".join(out)
     out.append(
@@ -333,6 +387,18 @@ def _section_schedule(envelope: dict[str, Any]) -> str:
     timeline = dash.get("milestones_timeline") or []
     out = ["## 8. Schedule & Milestones\n"]
     if not timeline:
+        phases = _atom_bullets(
+            envelope,
+            ("milestone_phase", "lead_time_constraint", "blackout_date_range"),
+            limit=20,
+        )
+        if phases:
+            out.append(
+                "_No dated milestone timeline; phase and lead-time statements "
+                "captured from the source artifacts:_\n"
+            )
+            out.extend(phases)
+            return "\n".join(out)
         out.append("_[NEEDS DATA: no project milestones captured.]_")
         return "\n".join(out)
     out.append("| Date (ISO) | Milestone | Source Atom |")
@@ -369,6 +435,18 @@ def _section_sla_and_support(envelope: dict[str, Any]) -> str:
     sla = dash.get("sla_summary") or []
     out = ["## 10. SLA & Support Terms\n"]
     if not sla:
+        terms = _atom_bullets(
+            envelope,
+            ("contract_term", "sla_term", "warranty_term", "support_term"),
+            limit=20,
+        )
+        if terms:
+            out.append(
+                "_No structured SLA targets; contract and support terms captured "
+                "from the source artifacts:_\n"
+            )
+            out.extend(terms)
+            return "\n".join(out)
         out.append("_[NEEDS DATA: no SLA targets captured.]_")
         return "\n".join(out)
     out.append("Aggregated SLA targets across all source artifacts:\n")
@@ -452,7 +530,19 @@ def _section_constraints(envelope: dict[str, Any]) -> str:
     atoms = envelope.get("atoms") or []
     atom_by_id = {a.get("id"): a for a in atoms}
     out = ["## 11. Site Access, Safety & Constraints\n"]
+    # The section title promises site access and safety, but only `constraint`
+    # was read. site_access_restriction, site_access_window, compliance_rule and
+    # compliance atoms are literally this section's subject and reached nothing.
+    extra = _atom_bullets(
+        envelope,
+        ("site_access_restriction", "site_access_window", "compliance_rule",
+         "compliance", "compliance_classification", "safety_requirement"),
+        limit=20,
+    )
     if not constraint_ids:
+        if extra:
+            out.extend(extra)
+            return "\n".join(out)
         out.append("_No site-access or safety constraints captured._")
         return "\n".join(out)
     rendered = 0
@@ -465,6 +555,9 @@ def _section_constraints(envelope: dict[str, Any]) -> str:
             continue
         rendered += 1
         out.append(f"- {text[:240]}  \n  _Source: atom `{aid}`_")
+    if extra:
+        out.extend(extra)
+        rendered += len(extra)
     if rendered == 0:
         out.append("_No site-access or safety constraints captured._")
     elif len(constraint_ids) > 30:
