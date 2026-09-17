@@ -28,3 +28,6 @@ venv/
 .vscode/
 .idea/
 *.swp
+
+# Envelope/SOW captures hold customer data (PUR-60) — never commit them
+sow-captures/
