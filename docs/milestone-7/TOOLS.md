@@ -32,7 +32,7 @@ and `sow-captures/` is gitignored.
 ```bash
 pip install azure-storage-blob azure-identity
 export AZURE_STORAGE_CONNECTION_STRING=...        # or --account-url + az login
-python -m sowsmith.tools.capture --source blob \
+python -m sowsmith.tools.capture --source blob --container <container> \
   --deal <id>:single_site --deal <id>:multi_site --deal <id>:time_and_materials \
   --deployed-at <worker deploy time, ISO> --out ~/sow-captures
 ```

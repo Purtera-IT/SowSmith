@@ -314,7 +314,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="deal id, optionally with a shape label (single_site, multi_site, time_and_materials)")
     ap.add_argument("--out", type=Path, default=Path("sow-captures"))
     ap.add_argument("--deployed-at", help="ISO time of the worker deploy the envelopes must postdate")
-    ap.add_argument("--container", default="orbitbrief-artifacts")
+    ap.add_argument("--container", help="blob container name (required for --source blob)")
     ap.add_argument("--account-url")
     ap.add_argument("--base-url")
     ap.add_argument("--root", type=Path, help="for --source dir")
@@ -329,6 +329,8 @@ def main(argv: list[str] | None = None) -> int:
             ap.error("--root is required for --source dir")
         source: Source = DirSource(args.root)
     elif args.source == "blob":  # pragma: no cover
+        if not args.container:
+            ap.error("--container is required for --source blob")
         source = BlobSource(args.container, args.account_url)
     else:  # pragma: no cover
         if not args.base_url:
