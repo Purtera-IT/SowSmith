@@ -198,3 +198,43 @@ def test_deterministic_output():
     md1 = build_sow_markdown(env)
     md2 = build_sow_markdown(env)
     assert md1 == md2  # byte-identical on same input
+
+
+def test_the_heading_is_the_deals_name_not_its_uuid():
+    """Every draft was headed "Statement of Work — 0452Cc64-9Cf2-4D7F-Ab28-6C8F08F6Fbc6": a UUID
+    run through `.title()`. The envelope knows the deal's real name."""
+    env = _minimal_envelope()
+    env["project_id"] = "0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6"
+    env["summary"]["crm"] = {
+        "deal_name": "010447 - Computacenter - The Home Depot - 145 Location Palo Alto deployment",
+        "account_name": "Computacenter",
+    }
+    md = build_sow_markdown(env)
+    assert md.startswith("# Statement of Work — 010447 - Computacenter - The Home Depot")
+    assert "**Project ID:** `0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6`" in md
+
+
+def test_the_deal_label_and_number_stand_in_for_a_missing_crm_name():
+    env = _minimal_envelope()
+    env["project_id"] = "0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6"
+    env["summary"]["deal_label"] = "010999 - Acme refresh"
+    assert build_sow_markdown(env).startswith("# Statement of Work — 010999 - Acme refresh")
+
+    env2 = _minimal_envelope()
+    env2["project_id"] = "0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6"
+    env2["summary"]["deal_number"] = "010999"
+    assert build_sow_markdown(env2).startswith("# Statement of Work — 010999")
+
+
+def test_a_uuid_with_no_name_anywhere_is_left_alone_not_title_cased():
+    env = _minimal_envelope()
+    env["project_id"] = "0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6"
+    md = build_sow_markdown(env)
+    assert md.startswith("# Statement of Work — 0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6")
+    assert "0452Cc64" not in md
+
+
+def test_a_crm_name_that_is_itself_a_uuid_is_not_used():
+    env = _minimal_envelope()
+    env["summary"]["crm"] = {"deal_name": "0452cc64-9cf2-4d7f-ab28-6c8f08f6fbc6"}
+    assert build_sow_markdown(env).startswith("# Statement of Work — Test Project")
