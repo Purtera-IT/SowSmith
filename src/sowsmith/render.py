@@ -43,6 +43,8 @@ Design principles:
 """
 from __future__ import annotations
 
+import re
+
 from typing import Any
 
 SOW_VERSION = "sowsmith_v1"
@@ -97,7 +99,7 @@ def _section_header(envelope: dict[str, Any]) -> str:
         "red": "SUBSTANTIAL WORK REMAINING",
     }.get(band, band.upper() if isinstance(band, str) else "—")
     return (
-        f"# Statement of Work — {_humanize(project_id)}\n\n"
+        f"# Statement of Work — {_deal_title(envelope)}\n\n"
         f"**Project ID:** `{project_id}`  \n"
         f"**Compile ID:** `{compile_id}`  \n"
         f"**Generated:** {generated_at}  \n"
@@ -782,10 +784,37 @@ def _section_footer(envelope: dict[str, Any]) -> str:
 # ─────────────────────────── helpers ───────────────────────────
 
 
+_UUID = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.I)
+
+
 def _humanize(slug: str) -> str:
     if not slug:
         return "—"
     return slug.replace("_", " ").title()
+
+
+def _deal_title(envelope: dict[str, Any]) -> str:
+    """What to call this SOW.
+
+    ``project_id`` is a UUID, and title-casing one gives every draft a heading like
+    "Statement of Work — 0452Cc64-9Cf2-4D7F-Ab28-6C8F08F6Fbc6". The envelope knows the deal's real
+    name: ``summary.crm.deal_name`` ("010447 - Computacenter - The Home Depot - 145 Location Palo
+    Alto deployment"), with ``summary.deal_label`` and ``summary.deal_number`` behind it. A UUID is
+    the last resort, and then it is left alone rather than title-cased into nonsense.
+    """
+    summary = envelope.get("summary") or {}
+    crm = summary.get("crm") or {}
+    for raw in (crm.get("deal_name"), summary.get("deal_label"), crm.get("account_name"),
+                summary.get("deal_number")):
+        name = str(raw or "").strip()
+        if name and not _UUID.match(name):
+            return name
+    pid = str(envelope.get("project_id") or "").strip()
+    if not pid:
+        return "Unknown Project"
+    # A UUID is left exactly as it is: title-casing one reads as damage
+    # ("0452Cc64-9Cf2-4D7F-Ab28-6C8F08F6Fbc6"). A readable id still humanizes.
+    return pid if _UUID.match(pid) else _humanize(pid)
 
 
 __all__ = ["build_sow_markdown", "SOW_VERSION"]
