@@ -1,0 +1,932 @@
+{
+  "schema_version": "orbitbrief.input.v2",
+  "project_id": "synthetic_deal_0001",
+  "compile_id": "cmp_synthetic_0001",
+  "generated_at": "2026-09-17T12:00:00Z",
+  "summary": {
+    "artifact_count": 3,
+    "atom_count": 20,
+    "page_count": 9
+  },
+  "documents": [
+    {
+      "artifact_id": "art_sow_pdf",
+      "filename": "synthetic_sow.pdf",
+      "artifact_type": "pdf",
+      "parser_version": "synthetic",
+      "structured": {},
+      "atom_ids": [],
+      "parse_outcome": "parsed"
+    },
+    {
+      "artifact_id": "art_quote_xlsx",
+      "filename": "synthetic_quote.xlsx",
+      "artifact_type": "xlsx",
+      "parser_version": "synthetic",
+      "structured": {},
+      "atom_ids": [],
+      "parse_outcome": "parsed"
+    },
+    {
+      "artifact_id": "art_email_eml",
+      "filename": "synthetic_thread.eml",
+      "artifact_type": "email",
+      "parser_version": "synthetic",
+      "structured": {},
+      "atom_ids": [],
+      "parse_outcome": "parsed"
+    }
+  ],
+  "atoms": [
+    {
+      "id": "atm_svc_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "service_line",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Install and terminate structured cabling for new IDF closets.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_svc_rej",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "service_line",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Relocate the customer data center to a new building.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "rejected",
+      "review_flags": [
+        "contradicted_by_newer_document"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_task_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "task",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Mount and label 24-port patch panels in each IDF.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_deliv_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "deliverable",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "As-built drawings and test results delivered within 10 business days.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_scope_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "scope_item",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Provide lift equipment for ceiling work above 12 feet.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_qty_sow",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "quantity",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Install 48 wireless access points at Site A.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "device:access_point",
+        "site:site_a"
+      ],
+      "structured": {
+        "quantity": 48
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_qty_quote",
+      "artifact_id": "art_quote_xlsx",
+      "atom_type": "vendor_line_item",
+      "authority_class": "vendor_quote",
+      "confidence": 0.91,
+      "text": "Access point, qty 42",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "device:access_point",
+        "site:site_a"
+      ],
+      "structured": {
+        "quantity": 42
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_qty_quote_r2",
+      "artifact_id": "art_quote_xlsx",
+      "atom_type": "vendor_line_item",
+      "authority_class": "vendor_quote",
+      "confidence": 0.91,
+      "text": "Access point (rev 2), qty 48",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "device:access_point",
+        "site:site_a"
+      ],
+      "structured": {
+        "quantity": 48
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_excl_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "exclusion",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Electrical work and conduit are excluded.",
+      "section_path": [
+        "Exclusions"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_money_sow",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "vendor_line_item",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Fixed fee for installation: $12,500.00",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "money:12500.0"
+      ],
+      "structured": {
+        "amount": 12500.0
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_money_email",
+      "artifact_id": "art_email_eml",
+      "atom_type": "customer_instruction",
+      "authority_class": "quoted_old_email",
+      "confidence": 0.91,
+      "text": "Confirming the $12,500.00 install fee from the SOW.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "money:12500.0"
+      ],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "needs_review",
+      "review_flags": [
+        "quoted_history"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_access_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "site_access_window",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Work permitted 7am-3pm weekdays; badge escort required.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_constraint_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "constraint",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Response to P1 incidents within 4 hours.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {
+        "sla": {
+          "response_hours": 4
+        }
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_accept_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "acceptance_criterion",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Each cable run passes Cat6A certification testing.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_accept_qa",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "acceptance_criterion",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Pending rows imported | PASS | 428",
+      "section_path": [
+        "QA_Checks"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_risk_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "risk",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Lift availability may delay ceiling work.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {
+        "risk_id": "R1",
+        "severity": "high",
+        "owner": "",
+        "mitigation": "Reserve lift early"
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_ms_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "milestone_phase",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Phase 1 kickoff on 2026-10-05.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "milestone:2026-10-05"
+      ],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_co_rule",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "change_order_rule",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Reschedule within 1 business day incurs 100% of planned cost.",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_contact_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "stakeholder",
+      "authority_class": "contractual_scope",
+      "confidence": 0.91,
+      "text": "Jordan Example, Facilities Manager",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [
+        "stakeholder:jordan_example"
+      ],
+      "structured": {},
+      "calibrated_confidence": 0.88,
+      "review_status": "auto_accepted",
+      "review_flags": [
+        "accepted_verified_receipt"
+      ],
+      "confidence_raw": 0.93
+    },
+    {
+      "id": "atm_wo_task_01",
+      "artifact_id": "art_sow_pdf",
+      "atom_type": "task",
+      "authority_class": "machine_extractor",
+      "confidence": 0.91,
+      "text": "Cable 6 IDF closets",
+      "section_path": [
+        "Scope"
+      ],
+      "locator": {
+        "page": 1,
+        "line": 1
+      },
+      "verified": "verified",
+      "entity_keys": [],
+      "structured": {
+        "kind": "task",
+        "text": "Cable 6 IDF closets",
+        "task_tier": "parent",
+        "is_quote_line": true,
+        "backfilled_from_atom_id": "atm_svc_01",
+        "backfill_reason": "work_order",
+        "count": 6,
+        "unit": "closet",
+        "object": "IDF closet",
+        "site_count": 1,
+        "after_hours": false,
+        "no_onsite_hands": false,
+        "customer_supplies_equipment": false
+      },
+      "calibrated_confidence": 0.88,
+      "review_status": "needs_review",
+      "review_flags": [
+        "work_order",
+        "task_tier_parent"
+      ],
+      "confidence_raw": 0.93
+    }
+  ],
+  "packets": [],
+  "entities": [],
+  "edges": [],
+  "indexes": {
+    "atoms_by_atom_type": {
+      "service_line": [
+        "atm_svc_01",
+        "atm_svc_rej"
+      ],
+      "task": [
+        "atm_task_01",
+        "atm_wo_task_01"
+      ],
+      "deliverable": [
+        "atm_deliv_01"
+      ],
+      "scope_item": [
+        "atm_scope_01"
+      ],
+      "quantity": [
+        "atm_qty_sow"
+      ],
+      "vendor_line_item": [
+        "atm_qty_quote",
+        "atm_qty_quote_r2",
+        "atm_money_sow"
+      ],
+      "exclusion": [
+        "atm_excl_01"
+      ],
+      "customer_instruction": [
+        "atm_money_email"
+      ],
+      "site_access_window": [
+        "atm_access_01"
+      ],
+      "constraint": [
+        "atm_constraint_01"
+      ],
+      "acceptance_criterion": [
+        "atm_accept_01",
+        "atm_accept_qa"
+      ],
+      "risk": [
+        "atm_risk_01"
+      ],
+      "milestone_phase": [
+        "atm_ms_01"
+      ],
+      "change_order_rule": [
+        "atm_co_rule"
+      ],
+      "stakeholder": [
+        "atm_contact_01"
+      ]
+    }
+  },
+  "coverage": {
+    "unrecovered_regions": []
+  },
+  "deal_timeline": {
+    "known": false,
+    "quote_asof": null,
+    "events": []
+  },
+  "pm_dashboard": {
+    "blockers": [
+      {
+        "kind": "generated_gap",
+        "atom_id": null,
+        "summary": "Who provides the lift?",
+        "field_id": "site.lift_equipment"
+      }
+    ],
+    "cross_doc_contradictions": [],
+    "intra_doc_contradictions": [],
+    "change_orders": [],
+    "stakeholders": [
+      {
+        "slug": "jordan_example",
+        "name": "Jordan Example",
+        "role": "Facilities Manager",
+        "email": null,
+        "phone": null
+      }
+    ],
+    "risks_by_owner": {},
+    "risks_unowned": [
+      {
+        "atom_id": "atm_risk_01",
+        "artifact_id": "art_sow_pdf",
+        "risk_id": "R1",
+        "summary": "Lift availability may delay ceiling work.",
+        "severity": "high",
+        "mitigation": "Reserve lift early"
+      }
+    ],
+    "action_items_by_owner": {},
+    "action_items_unowned": [],
+    "open_questions": [
+      {
+        "atom_id": null,
+        "artifact_id": null,
+        "text": "Who provides the lift?",
+        "review_status": "needs_review",
+        "kind": "generated_gap",
+        "field_id": "site.lift_equipment"
+      }
+    ],
+    "head_start": [],
+    "milestones_timeline": [
+      {
+        "atom_id": "atm_ms_01",
+        "iso": "2026-10-05",
+        "text": "Phase 1 kickoff on 2026-10-05."
+      }
+    ],
+    "sla_summary": [
+      {
+        "atom_id": "atm_constraint_01",
+        "sla": {
+          "response_hours": 4
+        },
+        "text": "Response to P1 incidents within 4 hours."
+      }
+    ],
+    "exclusions": [
+      {
+        "atom_id": "atm_excl_01",
+        "artifact_id": "art_sow_pdf",
+        "text": "Electrical work and conduit are excluded."
+      }
+    ],
+    "money_summary": {
+      "total": 25000.0,
+      "atoms": [
+        {
+          "atom_id": "atm_money_sow",
+          "amount": 12500.0,
+          "text": "Fixed fee for installation: $12,500.00"
+        },
+        {
+          "atom_id": "atm_money_email",
+          "amount": 12500.0,
+          "text": "Confirming the $12,500.00 install fee from the SOW."
+        }
+      ]
+    },
+    "schematic_review": {}
+  },
+  "sow_readiness_scorecard": {
+    "readiness_score": 0.62,
+    "grade": "C",
+    "blocker_count": 1,
+    "blocked": true,
+    "grade_capped_by_blockers": true,
+    "dimensions": {
+      "scope": {
+        "score": 0.8,
+        "signals": {}
+      },
+      "commercial": {
+        "score": 0.5,
+        "signals": {}
+      }
+    },
+    "description_by_dimension": {}
+  },
+  "srl_missing_checklist": {
+    "checklist_version": "srl_v2_expanded",
+    "field_count": 4,
+    "present_count": 3,
+    "missing_count": 1,
+    "coverage": 0.75,
+    "by_category": {
+      "site": {
+        "present": 1,
+        "total": 2,
+        "coverage": 0.5
+      }
+    },
+    "present": [],
+    "missing": [
+      {
+        "field_id": "site.lift_equipment",
+        "label": "Lift equipment owner",
+        "category": "site"
+      }
+    ]
+  },
+  "reconciliation": {},
+  "scope_truth": {
+    "devices": [
+      {
+        "device": "device:access_point",
+        "site": "site:site_a",
+        "canonical_quantity": 48,
+        "governing_claims": [
+          {
+            "atom_id": "atm_qty_sow",
+            "artifact_id": "art_sow_pdf",
+            "quantity": 48,
+            "authority_class": "contractual_scope",
+            "authority_rank": 100,
+            "text": "Install 48 wireless access points at Site A."
+          },
+          {
+            "atom_id": "atm_qty_quote_r2",
+            "artifact_id": "art_quote_xlsx",
+            "quantity": 48,
+            "authority_class": "vendor_quote",
+            "authority_rank": 65,
+            "text": "Access point (rev 2), qty 48"
+          }
+        ],
+        "governing_authority": "vendor_quote",
+        "all_reported_values": [
+          42,
+          48
+        ],
+        "is_contested": true
+      }
+    ],
+    "contested": [
+      {
+        "device": "device:access_point",
+        "site": "site:site_a",
+        "canonical_quantity": 48,
+        "competing_values": [
+          42
+        ],
+        "audit": [
+          {
+            "quantity": 42,
+            "claims": [
+              {
+                "atom_id": "atm_qty_quote",
+                "artifact_id": "art_quote_xlsx",
+                "quantity": 42,
+                "authority_class": "vendor_quote",
+                "authority_rank": 65,
+                "text": "Access point, qty 42"
+              }
+            ]
+          },
+          {
+            "quantity": 48,
+            "claims": [
+              {
+                "atom_id": "atm_qty_sow",
+                "artifact_id": "art_sow_pdf",
+                "quantity": 48,
+                "authority_class": "contractual_scope",
+                "authority_rank": 100,
+                "text": "Install 48 wireless access points at Site A."
+              },
+              {
+                "atom_id": "atm_qty_quote_r2",
+                "artifact_id": "art_quote_xlsx",
+                "quantity": 48,
+                "authority_class": "vendor_quote",
+                "authority_rank": 65,
+                "text": "Access point (rev 2), qty 48"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "device_count": 1,
+    "site_count": 1,
+    "contested_count": 1
+  },
+  "change_order_timeline": {
+    "entries": [],
+    "entry_count": 0,
+    "with_structured_delta": 0,
+    "with_approval_signal": 0
+  },
+  "site_readiness": {
+    "sites": [
+      {
+        "site": "site:site_a",
+        "readiness": 0.7,
+        "maturity": "anchored",
+        "band": "yellow",
+        "anchored": true,
+        "signal_count": 5,
+        "device_keys": [
+          "device:access_point"
+        ],
+        "device_count": 1,
+        "stakeholder_keys": [],
+        "stakeholder_count": 0,
+        "constraint_count": 1,
+        "scope_atom_count": 3,
+        "money_present": true,
+        "milestone_present": true,
+        "contradiction_count": 1,
+        "aliases": []
+      }
+    ],
+    "site_count": 1,
+    "anchored_count": 1,
+    "maturity_breakdown": {
+      "anchored": 1
+    },
+    "avg_readiness": 0.7,
+    "least_ready_sites": []
+  },
+  "stakeholder_load": {
+    "stakeholders": [],
+    "stakeholder_count": 0,
+    "bottlenecks": [],
+    "max_severity_load": 0
+  },
+  "truth_gate": {},
+  "project_vitals": {
+    "score_100": 69.0,
+    "band": "orange",
+    "capped_by_blockers": true,
+    "top_drivers": [
+      "scope_clarity"
+    ],
+    "top_detractors": [
+      "risk_ownership"
+    ],
+    "components": [
+      {
+        "name": "scope_clarity",
+        "weight": 0.3,
+        "raw_score": 0.9,
+        "contribution": 0.27,
+        "signal": {}
+      },
+      {
+        "name": "risk_ownership",
+        "weight": 0.1,
+        "raw_score": 0.0,
+        "contribution": 0.0,
+        "signal": {}
+      }
+    ]
+  },
+  "run_scope": {
+    "as_of": null,
+    "applied": false,
+    "documents_in_scope": 3
+  },
+  "deal_header": {
+    "customer": "Synthetic Customer",
+    "quote_type": "fixed_fee"
+  },
+  "deal_financials": {
+    "headline": {
+      "total": 12500.0
+    }
+  },
+  "bill_of_materials": {
+    "lines": []
+  }
+}
